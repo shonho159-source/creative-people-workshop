@@ -408,8 +408,15 @@ tools: Read, Write, Bash, WebFetch, WebSearch, mcp__apify__call-actor, mcp__apif
 ## תהליך עבודה
 
 ### שלב 1: קריאת הטופס
-1. `Read` את ה-PDF
-2. חלץ: שם מותג, כל ה-URLs, שירותים, מטרות, קהל, ערכים, סגנון, מתחרים מוזכרים
+
+**חשוב — קריאה ישירה של PDF, ללא OCR:**
+
+1. `Read` את ה-PDF ישירות עם הפרמטר `pages` אם הקובץ ארוך מ-10 עמודים (לדוגמא: `pages: "1-10"`)
+2. Claude קוראת PDF multimodal — רואה גם טקסט וגם תמונות. **אל תמירי ל-PNG ואל תפעילי OCR** — זה מבזבז 5-7 דקות ולא נחוץ.
+3. חלץ: שם מותג, כל ה-URLs, שירותים, מטרות, קהל, ערכים, סגנון, מתחרים מוזכרים
+
+**אם קריאת ה-PDF נכשלה** (למשל קובץ פגום):
+- אז ורק אז → המרה ל-PNG דרך `pdftoppm` ו-OCR. זה fallback, לא ברירת מחדל.
 
 ### שלב 2: זיהוי נישות (קריטי!)
 חפש בטופס סימנים ל-1, 2, או יותר נישות נפרדות. **גמישות מלאה** — הלקוח יכול להיות:
@@ -1335,23 +1342,46 @@ tools: Read, Write, Bash, Skill
 קלט נוסף:
 - `clients/<client-slug>/CLIENT.md` (לדעת על הנישות וההתאמה)
 
-## תהליך עבודה — לכל וידאו (9 פעמים)
+## תהליך עבודה — אופטימיזציה לזמן
 
-### שלב A: הכנת תיקיית עבודה
+**עיקרון מרכזי: הורדה מקבילה.** במקום להוריד 9 וידאו ברצף (39 דק׳), נוריד 3 וידאו במקביל בכל פעם דרך bash `&` ו-`wait`. חיסכון: ~24 דק׳ בלי פגיעה באיכות.
+
+### שלב A: הכנת תיקיות עבודה (פעם אחת לכל ה-9)
 ```bash
-mkdir -p clients/<slug>/02b-video-deep/<source>/<video-id>/frames
+for src in client local global; do
+  for i in 1 2 3; do
+    mkdir -p clients/<slug>/02b-video-deep/$src/video-$i/frames
+  done
+done
 ```
-- `<source>` = `client` / `local` / `global`
-- `<video-id>` = מספור פשוט: `video-1`, `video-2`, `video-3`
 
-### שלב B: הורדת הוידאו עם yt-dlp
+### שלב B: הורדה מקבילית של 3 וידאו בכל פעם
 
-**ניסיון 1 — בסיסי:**
+קרא את `client-top-videos.txt`, `local-top-videos.txt`, `global-top-videos.txt`. עבור על שלוש קבוצות של 3 URLs.
+
+**לכל קבוצה — 3 yt-dlp במקביל:**
+
 ```bash
+# קבוצה 1 — client (URLs 1-3) במקביל
 yt-dlp -f 'best[height<=720]/best' \
-  --output 'clients/<slug>/02b-video-deep/<source>/<video-id>/video.mp4' \
-  '<URL>'
+  --output 'clients/<slug>/02b-video-deep/client/video-1/video.mp4' \
+  '<URL-1>' &
+yt-dlp -f 'best[height<=720]/best' \
+  --output 'clients/<slug>/02b-video-deep/client/video-2/video.mp4' \
+  '<URL-2>' &
+yt-dlp -f 'best[height<=720]/best' \
+  --output 'clients/<slug>/02b-video-deep/client/video-3/video.mp4' \
+  '<URL-3>' &
+wait  # ממתין לסיום כל 3 ההורדות
 ```
+
+חזור על אותו דפוס ל-local (3 URLs) ול-global (3 URLs).
+
+### שלב B' — אם yt-dlp נכשל (לכל וידאו בנפרד)
+
+**ניסיון 1 — בסיסי (כבר מוטמע בשלב B עם `&`)**
+
+אם וידאו ספציפי נכשל (login required / 403), הרץ ניסיון 2 לאותו וידאו בלבד:
 
 **אם נכשל (login required / 403) — ניסיון 2: עם cookies מהדפדפן:**
 ```bash
@@ -1384,16 +1414,21 @@ ffmpeg -i clients/<slug>/02b-video-deep/<source>/<video-id>/video.mp4 \
   -vn -ar 16000 -ac 1 -y \
   clients/<slug>/02b-video-deep/<source>/<video-id>/audio.wav
 
-# Frames - תלוי באורך הוידאו
-# אם הוידאו <= 30 שניות — frame כל שנייה (fps=1)
-# אם 30-60 שניות — fps=0.5 (כל 2 שניות)
-# אם > 60 שניות — fps=0.333 (כל 3 שניות)
+# Frames - אופטימיזציה: דגימה כל 2 שניות (fps=0.5) כברירת מחדל
+# חיסכון: ~50% מספר ה-frames לרינדור multimodal, בלי פגיעה באיכות
+# (תזוזה ויזואלית בוידאו בין-frame של 1 שנייה מינימלית)
+#
+# אם הוידאו < 15 שניות — frame כל שנייה (fps=1)
+# אחרת — frame כל 2 שניות (fps=0.5)  ← ברירת מחדל
+# אם הוידאו > 90 שניות — frame כל 3 שניות (fps=0.333)
 ffmpeg -i clients/<slug>/02b-video-deep/<source>/<video-id>/video.mp4 \
   -vf "fps=<fps>" -y \
   clients/<slug>/02b-video-deep/<source>/<video-id>/frames/frame-%03d.jpg
 ```
 
 קבע fps לפי `ffprobe` או לפי המידע ב-`02-analysis/*-social.md` שכבר ידוע על אורך הוידאו.
+
+**טיפ נוסף לאופטימיזציה:** ffmpeg מרובה במקביל גם הוא בטוח. אם רוצים האצה נוספת — אפשר להריץ 3 ffmpegים במקביל (אחד לכל וידאו בקבוצה) באותו דפוס של `&` + `wait`.
 
 ### שלב D: תמלול עם whisper
 ```bash
@@ -1950,7 +1985,7 @@ polished_by: hebrew-content-writer
 ===FILE: .claude/agents/report-consolidator.md===
 ---
 name: report-consolidator
-description: סוכן Phase 4 (סדרתי, רץ אחרון). אוסף את כל הפלטים מ-Phase 1+2+2.5+3 ומפיק דוח אסטרטגי מעוצב ב-HTML (RTL) ו-PDF בסגנון Creative People - מינימליסטי + צבעי המותג של הלקוח כאקסנט. כותרות עברית, לינקים ב-target=_blank, אלמנטים גרפיים בכריכה, סקציות לפי פלטפורמה, הפרדה לפי נישות, עברית תקנית.
+description: סוכן Phase 4 (סדרתי, רץ אחרון). אוסף את כל הפלטים מ-Phase 1+2+2.5+3 ומפיק דוח אסטרטגי **כ-PDF סופי בלבד** (HTML הוא קובץ ביניים בלבד שנמחק בסוף). סגנון Creative People - מינימליסטי + צבעי המותג של הלקוח כאקסנט. כותרות עברית, לינקים ב-target=_blank, אלמנטים גרפיים בכריכה, סקציות לפי פלטפורמה, הפרדה לפי נישות, עברית תקנית.
 tools: Read, Write, Bash, Skill
 ---
 
@@ -2166,11 +2201,23 @@ Skill(hebrew-document-generator) — input: HTML, output: PDF
   "file://<absolute-path>/report.html"
 ```
 
-### שלב 7: פתיחה ודיווח
+### שלב 7: ניקוי ופתיחה — PDF בלבד כתוצר סופי
+
+**אחרי שה-PDF נוצר בהצלחה — מחק את ה-HTML הביניים** (התוצר הסופי הוא PDF בלבד):
+
 ```bash
-open clients/<slug>/04-deliverables/report.html
+# בדוק שה-PDF נוצר ותקין
+test -f clients/<slug>/04-deliverables/report.pdf && \
+  [ $(stat -f%z clients/<slug>/04-deliverables/report.pdf) -gt 100000 ] && \
+  rm clients/<slug>/04-deliverables/report.html
+
+# פתח את ה-PDF
 open clients/<slug>/04-deliverables/report.pdf
 ```
+
+**הסבר:** ה-HTML הוא רק קובץ עזר ל-Playwright/Weasyprint. אחרי שה-PDF מוכן — ה-HTML מיותר. חוסך מקום + מבהיר ללקוחה שיש תוצר סופי אחד.
+
+אם המשתמשת רוצה גרסת HTML (למשל לאתר) — היא תבקש מ-Claude לייצר אותה מחדש מהדאטה הקיים.
 
 ## כללי איכות
 
@@ -2201,6 +2248,7 @@ open clients/<slug>/04-deliverables/report.pdf
 - [ ] **CSS page-break rules** מובנים: כותרות נדבקות לתוכן, בלוקים לא נשברים, orphans/widows 3
 - [ ] **PDF margin 0** + cover תופס 100vh
 - [ ] **PDF עם hyperlinks לחיצים** — בדוק ידנית אחרי הפקה
+- [ ] **HTML ביניים נמחק** — בתיקיית 04-deliverables נשאר רק `report.pdf` (לא `report.html`)
 
 ===END FILE===
 
@@ -2276,10 +2324,9 @@ argument-hint: <client-slug> [--style=client-brand|cp-house]
 
 ### סיום
 
-1. הצג את הנתיב ל-`clients/$1/04-deliverables/report.html`
-2. הרץ `open clients/$1/04-deliverables/report.html`
-3. הרץ `open clients/$1/04-deliverables/report.pdf`
-4. הצג סיכום מהפלט של report-consolidator
+1. הצג את הנתיב ל-`clients/$1/04-deliverables/report.pdf`
+2. הרץ `open clients/$1/04-deliverables/report.pdf`
+3. הצג סיכום מהפלט של report-consolidator (כולל אישור שה-HTML הביניים נמחק)
 
 ## הערות
 
