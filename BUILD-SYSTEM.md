@@ -345,20 +345,64 @@ Phase 4 (sequential)
 
 ### מדיניות retry על Apify MCP (חובה לכל סוכן שמשתמש ב-Apify)
 
-**Fail-fast — מקסימום 2 ניסיונות לכל פעולת Apify:**
+**עיקרון: Fail-fast עם Fallback Chain — לא לולאות retry, אבל גם לא דאטה ריק.**
+
+#### שלב 1 · Per-call cap: מקסימום 2 ניסיונות
 
 1. ניסיון 1 — `mcp__apify__call-actor` רגיל
-2. אם נכשל (timeout / שגיאת dataset / 500) — ניסיון 2 עם פרמטרים מינימליים יותר (פחות results, פחות depth)
-3. אם גם ניסיון 2 נכשל — **לעבור הלאה**, לא לנסות שוב
+2. אם נכשל (timeout / שגיאת dataset / 500) — ניסיון 2 עם פרמטרים מצומצמים (resultsLimit מופחת, depth=1)
+3. אם גם ניסיון 2 נכשל — **לעבור ל-Fallback Chain** (לא לנסות Apify שוב)
 
-תיעוד בקובץ הפלט: "Apify נכשל אחרי 2 ניסיונות בתאריך X. הסיבה: Y. ממשיך בלי נתוני המקור הזה."
+#### שלב 2 · Fallback Chain (חובה לפני שמכריזים "לא נמצא")
 
-**אסור:**
-- ❌ לולאת retry של 3+ ניסיונות
+```
+Apify נכשל (2 ניסיונות) → WebFetch של דף הפרופיל הציבורי
+                       ↓ אם נכשל
+                       WebSearch (לאמת שהחשבון קיים + bio בסיסי)
+                       ↓ אם גם זה נכשל
+                       "לא נמצא + סיבה מפורטת"
+```
+
+**WebFetch fallback** (לפי פלטפורמה):
+- Instagram: `https://www.instagram.com/<handle>/` — אם פתוח, ניתן לחלץ bio + מספר עוקבים
+- TikTok: `https://www.tiktok.com/@<handle>` — בדרך כלל פתוח
+- Facebook: `https://www.facebook.com/<handle>` — עלול לדרוש login (אם כן → דלג)
+- LinkedIn: `https://www.linkedin.com/in/<handle>` — בדרך כלל פתוח
+
+**WebSearch fallback** (last resort):
+- חיפוש: `"<handle>" Instagram site:instagram.com`
+- מטרה: לאמת שהחשבון קיים ולחלץ bio מתוך תוצאות החיפוש
+
+#### שלב 3 · Per-agent Safety Check (קריטי)
+
+אם **50%+ מקריאות Apify** באותו סוכן נכשלו (גם אחרי Fallback Chain) → **STOP**:
+
+1. אל תפיק פלט סופי
+2. כתוב לקובץ הפלט: `STATUS: APIFY_DEGRADED — N/M כישלונות, הסיבה: X`
+3. דווח לאורקסטרטור: "Apify לא מתפקד באמינות. המשתמשת תחליט: להמשיך עם דאטה חלקי או לעצור הכל לבדוק טוקן/credit."
+
+האורקסטרטור (`/onboard-client`) יציג למשתמשת את ההודעה ויחכה לאישור.
+
+#### תיעוד חובה בכל פלט
+
+בכל פלט של סוכן שהשתמש ב-Apify, להוסיף בסוף ה-frontmatter:
+
+```yaml
+apify_calls: 5
+apify_failed: 1
+fallback_used: WebFetch (TikTok)
+status: complete | degraded | aborted
+```
+
+#### אסור
+
+- ❌ לולאת retry של 3+ ניסיונות על אותה קריאת Apify
 - ❌ לחזור על אותה פעולה עם אותם פרמטרים אחרי כישלון
 - ❌ לחכות יותר מ-60 שניות לתשובה אחת מ-Apify
+- ❌ לדלג ל"לא נמצא" בלי לעבור את ה-Fallback Chain
+- ❌ להמשיך לפלט סופי אם 50%+ נכשלו
 
-**הסיבה:** במקרים בהם Apify MCP מחזיר שגיאה (`get-dataset-items` עם dataset ID לא תקין, או actor שלא רץ עד הסוף), retry-ים נוספים מבזבזים 10+ דקות לבד. עדיף לעבור הלאה ולציין "לא נמצא" מאשר להיתקע.
+**הסיבה למדיניות:** סבב המבחנים האחרון הראה ש-`client-content-analyzer` בזבז 18 דקות על retry loops כש-Apify החזיר שגיאה ב-`get-dataset-items`. מצד שני, להוותר על דאטה זה לא תשובה. השילוב של "מקסימום 2 ניסיונות + Fallback Chain + Safety Check" נותן את הטוב מ-2 העולמות: לא מתקעים, אבל גם לא מוותרים על דאטה.
 
 ### Skills (חובה להתקין לפני סדנה)
 - **hebrew-content-writer** — ליטוש עברית תקנית (פאס סופי בכל סוכן שיוצר טקסט גלוי)
