@@ -15,9 +15,10 @@
 | **Claude Code CLI** | התקנה גלובלית | המנוע של המערכת |
 | **Bash tools** | yt-dlp, ffmpeg, whisper, git, node, chrome | ניתוח וידאו + תשתית |
 | **חשבון Apify + token** | דרך apify.com | סקרייפינג של אינסטגרם, טיקטוק, פייסבוק |
-| **MCPs (בתוך הפרויקט)** | Apify + Playwright | מתחברים ל-Claude Code דרך .mcp.json |
 | **5 Skills של עברית ועיצוב** | מתוך ה-repo של הסדנה | ליטוש עברית + יצירת PDF + design system |
 | **Repo הסדנה** | clone מ-GitHub | מביא את כל הקבצים שתצטרכי |
+
+**שימי לב**: ה-MCPs (Apify + Playwright) מותקנים אוטומטית בסדנה דרך Claude — את לא צריכה לעשות איתם כלום מראש, **חוץ מלהכין את הטוקן של Apify**.
 
 ---
 
@@ -91,14 +92,60 @@ whisper --help
 
 ---
 
-## שלב 3 · חשבון Apify + Token
+## שלב 3 · חשבון Apify + Token (קריטי!)
 
-1. הירשמי ב-https://apify.com/sign-up (חינמי, יש credit מתנה)
-2. אחרי הרישום, היכנסי ל-**Settings → Integrations → API tokens**
-3. לחצי על **+ Create new token** וקראי לו `workshop`
-4. **העתיקי את הטוקן ושמרי אותו במקום בטוח** — תזדקקי לו בשלב 5
+בסדנה Claude תבקש ממך את הטוקן. **חייב להיות לך מוכן ושמור** — אחרת תיתקעי 5-10 דקות לקבל אותו.
 
-> תקציב: ריצה אחת של אונבורדינג עולה $5-15 ב-Apify. ה-credit ההתחלתי החינמי אמור להספיק.
+### יצירת החשבון
+
+1. הירשמי ב-https://apify.com/sign-up (חינמי, יש credit מתנה של $5 בערך)
+2. אישור מייל
+
+### לקיחת הטוקן — שלב אחר שלב
+
+ה-**Apify Console** הוא הדף שאליו את צריכה להגיע: **https://console.apify.com**
+
+#### Path 1 — Settings
+
+```
+console.apify.com
+    ↓
+  לחיצה על האווטר/השם שלך (פינה ימנית עליונה)
+    ↓
+  Settings (תפריט שנפתח)
+    ↓
+  בתפריט הצדדי השמאלי: Integrations
+    ↓
+  לשונית "API tokens"
+    ↓
+  לחיצה על "+ Create new token"
+    ↓
+  שם לטוקן: "workshop" (או כל שם)
+    ↓
+  Permissions: השאירי על Full access (ברירת מחדל)
+    ↓
+  Create
+    ↓
+  לחיצה על אייקון ההעתקה 📋 ליד הטוקן
+    ↓
+  הדביקי במקום בטוח — לדוגמה הערה ב-Notes app
+```
+
+### מה הטוקן צריך להיראות
+
+```
+apify_api_AbCdEf1234567890GhIjKlMnOpQrSt
+```
+
+מתחיל ב-`apify_api_` ואחריו ~40 תווים אלפאנומריים.
+
+### לפני הסדנה — בדיקה
+
+1. פתחי Notes app (או כל מקום ששמרת בו את הטוקן)
+2. ודאי שהטוקן עדיין שם
+3. תהיי מסוגלת לפתוח אותו תוך 5 שניות בזמן הסדנה
+
+> **תקציב**: ריצה אחת של אונבורדינג עולה $5-15 ב-Apify. ה-credit ההתחלתי החינמי אמור להספיק.
 
 ---
 
@@ -121,70 +168,7 @@ cd creative-people-workshop
 - בודק שכלי bash מותקנים
 - מדפיס הוראות לשלב הבא
 
----
-
-## שלב 5 · MCPs (Apify + Playwright)
-
-ה-MCPs **לא** מותקנים גלובלית. הם מוגדרים ברמת פרויקט דרך קובץ `.mcp.json`.
-
-### יצירת קובץ MCP בפרויקט הלקוח הראשון שלך
-
-```bash
-# צרי תיקייה ללקוחה הראשונה שלך (תוכלי לעשות גם בסדנה):
-mkdir -p ~/Desktop/my-first-client
-cd ~/Desktop/my-first-client
-
-# העתיקי את ה-template:
-cp ~/Desktop/creative-people-workshop/.mcp.json.example .mcp.json
-
-# ערכי את .mcp.json והחליפי {{APIFY_TOKEN}} בטוקן האמיתי:
-nano .mcp.json   # או VS Code: code .mcp.json
-```
-
-תוכן `.mcp.json` אחרי העריכה אמור להיראות כך:
-
-```json
-{
-  "mcpServers": {
-    "apify": {
-      "command": "npx",
-      "args": ["-y", "@apify/actors-mcp-server"],
-      "env": {
-        "APIFY_TOKEN": "apify_api_AbCdEf123456..."
-      }
-    },
-    "playwright": {
-      "command": "npx",
-      "args": ["-y", "@playwright/mcp@latest"]
-    }
-  }
-}
-```
-
 ### בדיקה
-
-הריצי בתיקיית הפרויקט:
-
-```bash
-claude mcp list
-```
-
-אמור להחזיר:
-```
-apify: npx -y @apify/actors-mcp-server - ✓ Connected
-playwright: npx -y @playwright/mcp@latest - ✓ Connected
-```
-
-אם MCP מסומן **✗ Failed to connect** — בדקי:
-- האם הטוקן של Apify נכון?
-- האם node+npx מותקנים?
-- האם יש חיבור אינטרנט?
-
----
-
-## שלב 6 · בדיקת Skills
-
-אחרי שהרצת `./install.sh`, ודאי שכל 5 הסקילים זמינים:
 
 ```bash
 ls ~/.claude/skills/ | grep -E "hebrew|impeccable|skill-creator"
@@ -203,9 +187,9 @@ skill-creator
 
 ---
 
-## שלב 7 · להביא לקוחה אמיתית
+## שלב 5 · הכנת לקוחה אמיתית
 
-**חובה לסדנה**: לכל משתתפת יהיה PDF של טופס אונבורדינג של לקוחה אמיתית שלה (קיימת או חדשה).
+**חובה לסדנה**: PDF של טופס אונבורדינג של לקוחה אמיתית שלך.
 
 הטופס יכול לכלול:
 - שם, תיאור עסקי, נישות
@@ -216,7 +200,7 @@ skill-creator
 
 אם הטופס שלך באנגלית — בסדר. אם בעברית — מעולה.
 
-בסדנה ננתח אותו, נרחיב אותו, ונייצר דוח אסטרטגיה מלא.
+**שמרי אותו ב-`~/Downloads/`** (או כל מקום שתזכרי) עם שם פשוט כמו `client-intake.pdf`.
 
 ---
 
@@ -228,14 +212,13 @@ skill-creator
 - [ ] `claude login` עבר בהצלחה (חשבון Pro/Max)
 - [ ] `git --version`, `node --version` עובדים
 - [ ] `yt-dlp --version`, `ffmpeg -version`, `whisper --help` עובדים
-- [ ] חשבון Apify פעיל, יש לי טוקן שמור בצד
 - [ ] Chrome מותקן (לא Brave, לא Safari)
+- [ ] חשבון Apify פעיל
+- [ ] **טוקן Apify שמור אצלי ב-Notes** (אני יכולה להגיע אליו תוך 5 שניות)
 - [ ] `git clone` של repo הסדנה הצליח
 - [ ] `./install.sh` רץ בהצלחה
 - [ ] `ls ~/.claude/skills/` מציג את כל 5 הסקילים
-- [ ] יצרתי תיקיית פרויקט-לדוגמא עם `.mcp.json` מתוקן
-- [ ] `claude mcp list` מציג apify ו-playwright מחוברים
-- [ ] יש לי PDF של טופס אונבורדינג של לקוחה אמיתית
+- [ ] יש לי PDF של טופס אונבורדינג של לקוחה אמיתית ב-`~/Downloads/`
 
 ---
 
@@ -246,10 +229,10 @@ skill-creator
 - נסי דפדפן אחר (Chrome מומלץ)
 - אם תקועה — נקי cookies של claude.ai
 
-### `claude mcp list` מציג ✗ Failed to connect
-- הרצת מתוך תיקיית הפרויקט עם `.mcp.json`? לא מבחוץ
-- האם {{APIFY_TOKEN}} הוחלף בטוקן אמיתי?
-- בדקי `node --version` (לפחות 18+)
+### לא מוצאת את כפתור "Create new token" ב-Apify
+- ודאי שאת ב-https://console.apify.com (לא apify.com/home)
+- ודאי שאת ב-`Settings → Integrations → API tokens`
+- אם רואה רק token אחד קיים — אפשר להשתמש בו (לחיצה על העין 👁 לחשיפה, אחר כך 📋 להעתקה)
 
 ### `pip3 install whisper` נכשל
 - נסי `pip install -U openai-whisper` (פייתון 3 ברירת מחדל)
@@ -258,6 +241,10 @@ skill-creator
 ### `git clone` של repo הסדנה — Permission denied
 - ודאי שיש לך חיבור אינטרנט
 - ה-repo public — לא צריך SSH key
+
+### "New Terminal at Folder" לא מופיע בלחיצה ימנית
+- System Settings → Keyboard → Keyboard Shortcuts → Services → "Files and Folders" → tick "New Terminal at Folder"
+- חלופה: פתחי Terminal רגיל ועשי `cd ~/Desktop/my-agency` ידנית
 
 ---
 

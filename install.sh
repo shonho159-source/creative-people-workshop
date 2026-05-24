@@ -61,13 +61,13 @@ done
 # ----- Step 3: MCP setup hint -----
 echo ""
 echo -e "${BOLD}שלב הבא — MCPs${NC}"
-echo "ה-MCPs מוגדרים ברמת פרויקט (.mcp.json) ולא גלובלית."
-echo "כשתתחילי לעבוד על לקוח, צרי בתיקיית הפרויקט קובץ .mcp.json:"
+echo "ה-MCPs (Apify + Playwright) יותקנו אוטומטית בסדנה דרך Claude."
+echo "את לא צריכה לעשות איתם כלום מראש — חוץ מלהכין את הטוקן Apify."
 echo ""
-echo "  cp $SCRIPT_DIR/.mcp.json.example /path/to/client-project/.mcp.json"
-echo ""
-echo "ואז ערכי את הקובץ והחליפי את {{APIFY_TOKEN}} בטוקן האמיתי שלך."
-echo "טוקן Apify: https://console.apify.com/account/integrations"
+echo "איך לקבל טוקן Apify:"
+echo "  1. https://console.apify.com → לחיצה על האווטר → Settings"
+echo "  2. Integrations → API tokens → + Create new token"
+echo "  3. שמרי במקום בטוח (Notes app) — תוכלי לראות אותו בסדנה."
 
 # ----- Step 4: bash tools check -----
 echo ""

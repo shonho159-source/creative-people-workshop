@@ -16,9 +16,8 @@
 creative-people-workshop/
 ├── README.md                        # זה הקובץ
 ├── PRE-WORKSHOP-PREP.md             # מדריך התקנה למשתתפות הסדנה
-├── BUILD-SYSTEM.md                  # מפרט הבנייה ל-Plan Mode (107K)
+├── BUILD-SYSTEM.md                  # מפרט הבנייה ל-Plan Mode (109K)
 ├── install.sh                       # מעתיק 5 סקילים ל-~/.claude/skills/
-├── .mcp.json.example                # MCP config עם {{APIFY_TOKEN}} placeholder
 ├── .gitignore
 ├── skills/                          # 5 סקילים מבונדלים
 │   ├── hebrew-content-writer/
@@ -33,6 +32,8 @@ creative-people-workshop/
 ├── workshop-slides.pdf              # שקפי הסדנה
 └── CHEAT-SHEET-A4.pdf              # דף עזר A4 landscape
 ```
+
+**הערה**: ה-MCPs (Apify + Playwright) **לא** מוגדרים מראש. Claude יוצרת את `.mcp.json` אוטומטית במהלך בנייה (BUILD-SYSTEM.md מנחה אותה לבקש את הטוקן ולכתוב את הקובץ).
 
 ---
 
@@ -54,34 +55,25 @@ open PRE-WORKSHOP-PREP.md
 
 ### בסדנה — בנייה מ-0
 
-```bash
-# 1. תיקיית לקוחה חדשה
-mkdir -p ~/Desktop/my-client/clients/<slug>/00-intake
-cp ~/path/to/intake.pdf ~/Desktop/my-client/clients/<slug>/00-intake/
+הכל ידני ב-Finder, ופרומפט אחד ב-Claude Code:
 
-# 2. MCP config
-cp ~/Desktop/creative-people-workshop/.mcp.json.example ~/Desktop/my-client/.mcp.json
-# ערכי את הקובץ והחליפי {{APIFY_TOKEN}} בטוקן שלך
-
-# 3. פתחי Claude Code בתיקייה
-cd ~/Desktop/my-client && claude
-
-# 4. בתוך Claude Code:
-#    - Shift+Tab → Plan Mode
-#    - הדביקי את הפרומפט:
+```
+1. ב-Finder: צרי תיקייה בשם my-agency על Desktop
+2. ב-Finder: גררי את BUILD-SYSTEM.md מ-repo הסדנה לתוכה
+3. בתיקייה: Right-click → New Terminal at Folder, ואז כתבי: claude
+4. Shift+Tab (Plan Mode) ותדביקי:
 ```
 
-> קראי את הקובץ `BUILD-SYSTEM.md` מ-repo הסדנה:
-> 
-> `~/Desktop/creative-people-workshop/BUILD-SYSTEM.md`
-> 
-> ובני את המערכת בתיקייה הזאת לפי המפרט. צרי את כל 13 הקבצים, הורידי את 2 התבניות מ-curl, וצרי תיקיית clients/. אם יש כבר PDF ב-`clients/<slug>/00-intake/` — תיאמי את CLAUDE.md ללקוחה.
+> קראי את BUILD-SYSTEM.md ובני את כל המערכת בתיקייה הזאת לפי המפרט.
 
-Claude תכננן את הבנייה (Plan Mode), תאשרי, ותוך 30 שניות יש לך מערכת מלאה. אז:
+Claude תכננן את הבנייה, את תאשרי, היא תיצור 13 קבצים + תוריד 2 templates, ובסוף תבקש את הטוקן Apify ותכתוב .mcp.json. סגרי ופתחי את Claude Code מחדש (`/exit` ואז `claude`) — המערכת מוכנה.
 
-```bash
-# 5. הריצי את המערכת
-/onboard-client <slug>
+אחרי בנייה, הוסיפי לקוחה:
+
+```
+5. ב-Finder: צרי תיקייה בשם הלקוחה תחת clients/, ותוכה תיקייה 00-intake/
+6. גררי את ה-PDF של הלקוחה לתוך 00-intake/
+7. ב-Claude Code, הדביקי פרומפט אונבורדינג (ראי PRE-WORKSHOP-PREP.md)
 ```
 
 המתנה 15-25 דקות. תוצרים ב-`clients/<slug>/04-deliverables/`.

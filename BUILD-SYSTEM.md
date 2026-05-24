@@ -21,7 +21,7 @@
 
 2. צרי 13 קבצי MD לפי התוכן המופיע למטה — **verbatim, ללא שינויים**.
 
-3. הורידי 2 תבניות HTML דרך curl מ-GitHub של הסדנה:
+3. הורידי 2 תבניות HTML + רפרנס PDF דרך curl מ-GitHub של הסדנה:
    ```bash
    curl -fsSL -o templates/report-template.html \
      https://raw.githubusercontent.com/shonho159-source/creative-people-workshop/main/templates/report-template.html
@@ -31,11 +31,45 @@
      https://raw.githubusercontent.com/shonho159-source/creative-people-workshop/main/templates/reference-presentation-jeremy.pdf
    ```
 
-4. צרי `.mcp.json` (אם לא קיים) — העתיקי מ-`~/Desktop/creative-people-workshop/.mcp.json.example` והנחיני אותי להחליף את {{APIFY_TOKEN}}.
+4. **שלב התקנת MCPs (חובה — אחרון, אחרי כל יצירת הקבצים)**:
 
-5. אם יש כבר תיקיית `clients/<slug>/00-intake/` עם PDF — קראי אותו והכיני CLIENT.md מותאם ללקוחה. אחרת — צרי `clients/` ריקה והנחיני אותי לשים PDF אונבורדינג שם.
+   א. עצרי וכתבי למשתמשת:
+   > "כדי להפעיל את המערכת אני צריכה את הטוקן של Apify שלך.
+   >
+   > איך לקחת אותו:
+   > 1. פתחי דפדפן ולכי ל-https://console.apify.com
+   > 2. למעלה מימין — לחצי על האווטר שלך → **Settings**
+   > 3. בתפריט הצדדי שמאלי — **Integrations**
+   > 4. בלשונית **API tokens** — תראי את הטוקן הקיים, או לחצי **+ Create new token** ותני לו שם.
+   > 5. לחצי על אייקון ההעתקה (📋) — הטוקן מתחיל ב-`apify_api_...`
+   >
+   > עכשיו תדביקי אותו כאן בצ'אט."
 
-6. אחרי הבנייה — הריצי `tree -L 3` או `ls -R` והציגי לי את המבנה לאישור.
+   ב. חכי שהמשתמשת תדביק את הטוקן (טקסט שמתחיל ב-`apify_api_`).
+
+   ג. צרי קובץ `.mcp.json` בתיקייה הנוכחית עם תוכן זה (החליפי את `<TOKEN>` בערך שהדביקה):
+   ```json
+   {
+     "mcpServers": {
+       "apify": {
+         "command": "npx",
+         "args": ["-y", "@apify/actors-mcp-server"],
+         "env": {
+           "APIFY_TOKEN": "<TOKEN>"
+         }
+       },
+       "playwright": {
+         "command": "npx",
+         "args": ["-y", "@playwright/mcp@latest"]
+       }
+     }
+   }
+   ```
+
+   ד. הדפיסי הודעת סיום מסכמת:
+   > "המערכת מוכנה. כדי שה-MCPs ייטענו — את צריכה לסגור את Claude Code (כתבי `/exit` או Ctrl+C) ולפתוח שוב (`claude` בטרמינל). אחרי שתפתחי שוב, פתחי תיקייה ב-clients/ ללקוחה הראשונה שלך, שימי PDF של טופס אונבורדינג ב-00-intake/, ובקשי ממני אונבורדינג."
+
+5. אחרי כל השלבים — הריצי `tree -L 3` או `ls -R` והציגי לי את המבנה לאישור.
 
 ### עקרונות פעולה
 
@@ -51,9 +85,11 @@
 
 - [ ] נוצרו 13 קבצי MD (1 CLAUDE.md + 9 agents + 3 commands)
 - [ ] נוצרו 2 קבצי HTML ב-templates/ (curl הצליח)
-- [ ] נוצרה תיקיית clients/ (ריקה או עם דוגמא)
+- [ ] נוצרה תיקיית clients/ (ריקה)
 - [ ] front-matter של כל agent file נשמר עם name + description
 - [ ] תוכן עברית — לא תרגמתי בטעות לאנגלית
+- [ ] **ביקשתי טוקן Apify מהמשתמשת, קיבלתי, וכתבתי .mcp.json**
+- [ ] הזכרתי למשתמשת לסגור ולפתוח את Claude Code
 
 ---
 
