@@ -1,0 +1,755 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>{{CLIENT_NAME}} — אסטרטגיית תוכן · Creative People</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500;600;700&family=EB+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=Frank+Ruhl+Libre:wght@400;500;700;900&family=Heebo:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <base target="_blank">
+  <style>
+    /* ═══════════════════════════════════════════════════════════
+       CP-HOUSE STYLE (Jeremy 1:1 Replica)
+       Monochrome · Serif · Pill section headers · 2-column EN/HE
+       ═══════════════════════════════════════════════════════════ */
+
+    :root {
+      /* Monochrome palette — pure B&W like Jeremy reference */
+      --paper: #fafafa;
+      --paper-2: #f2f2f2;
+      --paper-deep: #ebebeb;
+      --ink: #1a1a1a;
+      --ink-2: #3a3a3a;
+      --muted: #888;
+      --muted-2: #b0b0b0;
+      --line: #d4d4d4;
+      --line-soft: #e8e8e8;
+
+      /* No brand color — pure monochrome */
+      --accent: var(--ink);
+      --pill-bg: var(--ink);
+      --pill-fg: var(--paper);
+
+      /* Replica fonts of Jeremy */
+      --serif-display: 'Cormorant Garamond', 'EB Garamond', Garamond, serif;
+      --serif-body: 'EB Garamond', 'Cormorant Garamond', Garamond, serif;
+      --he-display: 'Frank Ruhl Libre', serif;
+      --he-body: 'Heebo', system-ui, sans-serif;
+
+      /* Spacing scale */
+      --s-1: 4px; --s-2: 8px; --s-3: 12px; --s-4: 16px;
+      --s-6: 24px; --s-8: 32px; --s-10: 40px; --s-12: 48px;
+      --s-16: 64px; --s-20: 80px; --s-24: 96px;
+
+      --gutter: clamp(40px, 6vw, 96px);
+      --max-w: 1100px;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: var(--he-body);
+      color: var(--ink);
+      background: var(--paper);
+      line-height: 1.7;
+      direction: rtl;
+      text-align: right;
+      -webkit-font-smoothing: antialiased;
+      font-size: 15px;
+    }
+
+    /* ═══════════════════════════════════════════════════════════
+       TYPOGRAPHY
+       ═══════════════════════════════════════════════════════════ */
+
+    h1, h2 {
+      font-family: var(--he-display);
+      font-weight: 700;
+      letter-spacing: -0.01em;
+    }
+
+    h3 {
+      font-family: var(--he-display);
+      font-weight: 500;
+      font-size: 1.4rem;
+      margin: var(--s-12) 0 var(--s-4);
+      letter-spacing: -0.005em;
+    }
+
+    h4 {
+      font-family: var(--he-body);
+      font-weight: 600;
+      font-size: 1.1rem;
+      margin: var(--s-8) 0 var(--s-3);
+      letter-spacing: 0;
+    }
+
+    p {
+      margin-bottom: var(--s-4);
+      color: var(--ink-2);
+      max-width: 68ch;
+      line-height: 1.75;
+    }
+
+    a {
+      color: var(--ink);
+      text-decoration: none;
+      border-bottom: 1px solid var(--muted-2);
+      transition: border-color 0.15s;
+    }
+    a:hover { border-bottom-color: var(--ink); }
+
+    strong { color: var(--ink); font-weight: 700; }
+    em { font-style: italic; }
+
+    code {
+      font-family: 'JetBrains Mono', ui-monospace, Menlo, monospace;
+      background: var(--paper-2);
+      padding: 1px 6px;
+      font-size: 0.86em;
+    }
+
+    /* ═══════════════════════════════════════════════════════════
+       COVER · Jeremy-style cover
+       ═══════════════════════════════════════════════════════════ */
+
+    .cover {
+      min-height: 100vh;
+      height: 100vh;
+      padding: var(--gutter);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      position: relative;
+      background: var(--paper);
+    }
+
+    .cover-inner {
+      max-width: var(--max-w);
+      margin: 0 auto;
+      width: 100%;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .cover-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      padding-bottom: var(--s-6);
+      border-bottom: 1px solid var(--line);
+    }
+
+    .cover-logo {
+      font-family: var(--serif-display);
+      font-weight: 500;
+      font-size: 1.6rem;
+      letter-spacing: 0.04em;
+      color: var(--ink);
+    }
+    .cover-logo small {
+      display: block;
+      font-family: var(--he-body);
+      font-size: 0.7rem;
+      letter-spacing: 0.36em;
+      color: var(--muted);
+      margin-top: 4px;
+      text-transform: uppercase;
+      font-weight: 500;
+    }
+
+    .cover-date {
+      font-family: var(--serif-body);
+      font-style: italic;
+      font-size: 0.95rem;
+      color: var(--muted);
+      text-align: left;
+    }
+
+    .cover-main {
+      margin: auto 0;
+      text-align: center;
+    }
+
+    .cover-eyebrow {
+      font-family: var(--serif-display);
+      font-style: italic;
+      font-size: 1.1rem;
+      color: var(--muted);
+      letter-spacing: 0.04em;
+      margin-bottom: var(--s-4);
+    }
+
+    .cover-title-en {
+      font-family: var(--serif-display);
+      font-weight: 400;
+      font-size: clamp(48px, 7vw, 96px);
+      line-height: 1;
+      letter-spacing: 0.02em;
+      color: var(--ink);
+      margin-bottom: var(--s-4);
+      text-transform: uppercase;
+    }
+
+    .cover-title-he {
+      font-family: var(--he-display);
+      font-weight: 500;
+      font-size: clamp(28px, 3.5vw, 44px);
+      line-height: 1.15;
+      color: var(--ink);
+      margin-bottom: var(--s-8);
+    }
+
+    .cover-divider {
+      width: 80px;
+      height: 1px;
+      background: var(--ink);
+      margin: var(--s-8) auto;
+    }
+
+    .cover-subtitle {
+      font-family: var(--serif-body);
+      font-style: italic;
+      font-size: 1.15rem;
+      color: var(--ink-2);
+      max-width: 50ch;
+      margin: 0 auto var(--s-4);
+      line-height: 1.5;
+    }
+
+    .cover-tagline {
+      font-family: var(--he-body);
+      font-size: 0.85rem;
+      color: var(--muted);
+      letter-spacing: 0.02em;
+      max-width: 50ch;
+      margin: 0 auto;
+    }
+
+    .cover-footer {
+      padding-top: var(--s-6);
+      border-top: 1px solid var(--line);
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      font-family: var(--he-body);
+      font-size: 0.75rem;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+    .cover-footer-item strong {
+      display: block;
+      font-family: var(--serif-display);
+      font-size: 1.2rem;
+      font-weight: 500;
+      color: var(--ink);
+      letter-spacing: 0;
+      text-transform: none;
+      margin-bottom: 2px;
+    }
+
+    /* ═══════════════════════════════════════════════════════════
+       CHAPTERS
+       ═══════════════════════════════════════════════════════════ */
+
+    .chapter {
+      max-width: var(--max-w);
+      margin: 0 auto;
+      padding: var(--s-24) var(--gutter) var(--s-20);
+      background: var(--paper);
+    }
+    .chapter + .chapter { border-top: 1px solid var(--line); }
+
+    /* PILL section header — the Jeremy signature */
+    .chapter-head {
+      display: flex;
+      align-items: center;
+      gap: var(--s-6);
+      margin-bottom: var(--s-12);
+      padding-bottom: var(--s-4);
+      border-bottom: 1px solid var(--ink);
+    }
+
+    .chapter-pill {
+      display: inline-flex;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 2px;
+      background: var(--pill-bg);
+      color: var(--pill-fg);
+      padding: var(--s-3) var(--s-6);
+      border-radius: 999px;
+      font-family: var(--he-body);
+    }
+    .chapter-pill .num {
+      font-family: var(--serif-display);
+      font-weight: 400;
+      font-size: 0.85rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      opacity: 0.7;
+    }
+    .chapter-pill .name {
+      font-family: var(--he-body);
+      font-weight: 600;
+      font-size: 1rem;
+      line-height: 1;
+    }
+
+    .chapter-en {
+      flex: 1;
+      font-family: var(--serif-display);
+      font-style: italic;
+      font-weight: 400;
+      font-size: 1.4rem;
+      color: var(--muted);
+      letter-spacing: 0.02em;
+      text-align: left;
+      direction: ltr;
+    }
+
+    /* ═══════════════════════════════════════════════════════════
+       2-COLUMN EN/HE LAYOUT (select pages)
+       ═══════════════════════════════════════════════════════════ */
+
+    .two-col {
+      display: grid;
+      grid-template-columns: 1fr 1px 1fr;
+      gap: var(--s-10);
+      margin: var(--s-10) 0;
+      align-items: start;
+    }
+    .two-col .divider {
+      background: var(--line);
+      width: 1px;
+      align-self: stretch;
+    }
+    .two-col .col-en {
+      font-family: var(--serif-body);
+      direction: ltr;
+      text-align: left;
+      font-size: 0.95rem;
+      line-height: 1.7;
+      color: var(--ink-2);
+    }
+    .two-col .col-he {
+      font-family: var(--he-body);
+      direction: rtl;
+      text-align: right;
+      font-size: 0.95rem;
+      line-height: 1.7;
+      color: var(--ink-2);
+    }
+
+    /* ═══════════════════════════════════════════════════════════
+       TABLES
+       ═══════════════════════════════════════════════════════════ */
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: var(--s-6) 0;
+      font-size: 0.9rem;
+      background: var(--paper);
+    }
+    th, td {
+      text-align: right;
+      padding: var(--s-3) var(--s-4);
+      border-bottom: 1px solid var(--line-soft);
+      vertical-align: top;
+      line-height: 1.6;
+    }
+    th {
+      font-family: var(--he-body);
+      font-weight: 600;
+      font-size: 0.72rem;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--muted);
+      border-bottom: 1px solid var(--ink);
+      background: var(--paper-2);
+    }
+    tr:last-child td { border-bottom: none; }
+
+    /* ═══════════════════════════════════════════════════════════
+       PLATFORM SECTIONS (subtle monochrome)
+       ═══════════════════════════════════════════════════════════ */
+
+    .platform-section {
+      margin: var(--s-10) 0;
+      padding: var(--s-6) 0 var(--s-2);
+      border-top: 1px solid var(--line);
+    }
+    .platform-label {
+      display: inline-block;
+      font-family: var(--serif-display);
+      font-style: italic;
+      font-size: 0.85rem;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--ink);
+      margin: 0 0 var(--s-4);
+      padding-top: var(--s-2);
+      border-top: 2px solid var(--ink);
+      width: fit-content;
+    }
+
+    /* ═══════════════════════════════════════════════════════════
+       STAT ROWS / NICHE SECTIONS
+       ═══════════════════════════════════════════════════════════ */
+
+    .stat-row {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+      gap: 0;
+      margin: var(--s-10) 0;
+      border-top: 1px solid var(--ink);
+      border-bottom: 1px solid var(--ink);
+    }
+    .stat { padding: var(--s-8) var(--s-4); border-left: 1px solid var(--line); }
+    .stat:first-child { border-left: none; }
+    .stat-label {
+      font-family: var(--he-body);
+      font-size: 0.7rem;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: var(--s-3);
+      font-weight: 600;
+    }
+    .stat-value {
+      font-family: var(--serif-display);
+      font-size: 2.5rem;
+      font-weight: 400;
+      line-height: 0.95;
+      color: var(--ink);
+      letter-spacing: 0;
+    }
+    .stat-sub { font-size: 0.75rem; color: var(--muted); margin-top: var(--s-2); }
+
+    .niche-section {
+      margin: var(--s-12) 0;
+      padding: var(--s-10) 0 var(--s-6);
+      border-top: 1px solid var(--ink);
+    }
+    .niche-label {
+      display: inline-block;
+      font-family: var(--serif-display);
+      font-style: italic;
+      font-size: 0.85rem;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--ink);
+      padding: 0 0 var(--s-2);
+      margin: 0 0 var(--s-6);
+      border-bottom: 1px solid var(--ink);
+    }
+
+    /* ═══════════════════════════════════════════════════════════
+       VIDEO DEEP CARDS
+       ═══════════════════════════════════════════════════════════ */
+
+    .video-deep {
+      background: var(--paper);
+      padding: var(--s-10) 0;
+      margin: var(--s-10) 0;
+      border-top: 1px solid var(--ink);
+    }
+    .video-deep-source {
+      font-family: var(--serif-display);
+      font-style: italic;
+      font-size: 0.78rem;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: var(--s-3);
+      font-weight: 400;
+    }
+    .video-deep-hook {
+      font-family: var(--he-display);
+      font-size: 1.3rem;
+      font-weight: 500;
+      line-height: 1.3;
+      margin-bottom: var(--s-4);
+      max-width: 32ch;
+    }
+    .video-deep-meta {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.78rem;
+      color: var(--muted);
+      margin-bottom: var(--s-6);
+    }
+    .video-deep-structure {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+      gap: 0;
+      margin: var(--s-6) 0;
+      border-top: 1px solid var(--line);
+      border-bottom: 1px solid var(--line);
+    }
+    .video-deep-structure div {
+      padding: var(--s-4);
+      border-left: 1px solid var(--line);
+      font-size: 0.85rem;
+      color: var(--ink-2);
+    }
+    .video-deep-structure div:first-child { border-left: none; }
+    .video-deep-structure strong {
+      display: block;
+      font-family: var(--he-body);
+      font-size: 0.7rem;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--ink);
+      margin-bottom: var(--s-2);
+      font-weight: 600;
+    }
+    .video-deep-takeaway {
+      background: var(--paper-2);
+      padding: var(--s-6) var(--s-8);
+      margin-top: var(--s-6);
+    }
+    .video-deep-takeaway strong {
+      display: block;
+      font-family: var(--serif-display);
+      font-style: italic;
+      font-size: 0.78rem;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--ink);
+      margin-bottom: var(--s-3);
+      font-weight: 400;
+    }
+
+    /* ═══════════════════════════════════════════════════════════
+       SWOT (flat, monochrome)
+       ═══════════════════════════════════════════════════════════ */
+
+    .swot-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0;
+      margin: var(--s-10) 0;
+      border-top: 1px solid var(--ink);
+      border-bottom: 1px solid var(--ink);
+    }
+    .swot-cell {
+      padding: var(--s-8);
+      background: var(--paper);
+      border-left: 1px solid var(--line);
+      border-bottom: 1px solid var(--line);
+    }
+    .swot-cell:nth-child(2n) { border-left: none; }
+    .swot-cell:nth-child(3), .swot-cell:nth-child(4) { border-bottom: none; }
+    .swot-cell h4 {
+      font-family: var(--serif-display);
+      font-style: italic;
+      font-size: 0.85rem;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      margin: 0 0 var(--s-4);
+      font-weight: 400;
+      color: var(--ink);
+    }
+
+    /* ═══════════════════════════════════════════════════════════
+       PULL QUOTE (Jeremy-style centered serif)
+       ═══════════════════════════════════════════════════════════ */
+
+    blockquote {
+      font-family: var(--serif-display);
+      font-style: italic;
+      font-size: 1.75rem;
+      line-height: 1.35;
+      font-weight: 400;
+      margin: var(--s-16) auto;
+      padding: var(--s-10) 0;
+      max-width: 50ch;
+      text-align: center;
+      border-top: 1px solid var(--ink);
+      border-bottom: 1px solid var(--ink);
+      color: var(--ink);
+    }
+    blockquote cite {
+      display: block;
+      font-family: var(--he-body);
+      font-style: normal;
+      font-size: 0.78rem;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-top: var(--s-4);
+      font-weight: 500;
+    }
+
+    /* ═══════════════════════════════════════════════════════════
+       SWATCH GRID
+       ═══════════════════════════════════════════════════════════ */
+
+    .swatch-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+      gap: 0;
+      margin: var(--s-8) 0;
+      border: 1px solid var(--line);
+    }
+    .swatch { border-left: 1px solid var(--line); background: var(--paper); }
+    .swatch:last-child { border-left: none; }
+    .swatch-color { height: 140px; }
+    .swatch-info { padding: var(--s-4); }
+    .swatch-role {
+      font-family: var(--he-body);
+      font-size: 0.7rem;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: var(--s-1);
+      font-weight: 600;
+    }
+    .swatch-hex { font-family: 'JetBrains Mono', monospace; font-size: 0.85rem; font-weight: 500; }
+
+    /* ═══════════════════════════════════════════════════════════
+       FOOTER
+       ═══════════════════════════════════════════════════════════ */
+
+    footer {
+      max-width: var(--max-w);
+      margin: 0 auto;
+      padding: var(--s-16) var(--gutter);
+      border-top: 1px solid var(--ink);
+      background: var(--paper);
+      text-align: center;
+      font-family: var(--he-body);
+      font-size: 0.72rem;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+    footer .mark {
+      font-family: var(--serif-display);
+      font-size: 1.6rem;
+      letter-spacing: 0.08em;
+      color: var(--ink);
+      margin-bottom: var(--s-3);
+      text-transform: uppercase;
+      font-weight: 400;
+    }
+
+    /* ═══════════════════════════════════════════════════════════
+       PRINT — page-break rules baked in
+       ═══════════════════════════════════════════════════════════ */
+
+    @page { size: A4; margin: 0; }
+
+    @media print {
+      body { background: var(--paper); }
+      .chapter { padding: var(--s-12) var(--gutter); page-break-inside: auto; }
+      .cover { page-break-after: always; min-height: 100vh; height: 100vh; }
+      a { color: var(--ink); border-bottom: none; }
+
+      /* Headings glued to following content */
+      h1, h2, h3, h4 { page-break-after: avoid; break-after: avoid; page-break-inside: avoid; }
+      h3 + p, h3 + ul, h3 + table, h3 + .niche-section, h3 + .platform-section, h3 + .two-col, h3 + .video-deep { page-break-before: avoid; }
+      .chapter-head { page-break-after: avoid; break-after: avoid; }
+
+      /* Orphan/widow control */
+      p, li { orphans: 3; widows: 3; }
+
+      /* Multi-element blocks together */
+      .video-deep, .niche-section, .swot-cell, .platform-section, .stat-row, .swatch-grid, .swatch, .two-col, blockquote { page-break-inside: avoid; break-inside: avoid; }
+    }
+  </style>
+</head>
+
+<body>
+
+<!-- ═══════════════════════════════════════════════════════════
+     COVER · Jeremy-style replica
+     ═══════════════════════════════════════════════════════════ -->
+
+<section class="cover">
+  <div class="cover-inner">
+    <div class="cover-top">
+      <div class="cover-logo">CREATIVE PEOPLE<small>BRAND AGENCY</small></div>
+      <div class="cover-date">{{REPORT_DATE}}<br><em>{{REPORT_VERSION}}</em></div>
+    </div>
+
+    <div class="cover-main">
+      <div class="cover-eyebrow">FOR · עבור</div>
+      <h1 class="cover-title-en">{{CLIENT_NAME_EN}}</h1>
+      <h2 class="cover-title-he">{{CLIENT_NAME_HE}}</h2>
+
+      <div class="cover-divider"></div>
+
+      <div class="cover-subtitle">{{REPORT_SUBTITLE_EN}}</div>
+      <div class="cover-tagline">{{REPORT_TAGLINE_HE}}</div>
+    </div>
+
+    <div class="cover-footer">
+      <div class="cover-footer-item"><strong>{{NICHE_COUNT}}</strong>NICHES · נישות</div>
+      <div class="cover-footer-item"><strong>{{PLATFORM_COUNT}}</strong>PLATFORMS · פלטפורמות</div>
+      <div class="cover-footer-item"><strong>{{VIDEO_COUNT}}</strong>VIDEO ANALYSES · ניתוחי וידאו</div>
+      <div class="cover-footer-item"><strong>CP</strong>HOUSE STYLE</div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════════
+     CHAPTER 01 · EXECUTIVE SUMMARY · סיכום מנהל
+     ═══════════════════════════════════════════════════════════ -->
+
+<section class="chapter">
+  <div class="chapter-head">
+    <div class="chapter-pill">
+      <span class="num">CHAPTER 01</span>
+      <span class="name">סיכום מנהל</span>
+    </div>
+    <div class="chapter-en">Executive Summary</div>
+  </div>
+
+  {{CHAPTER_01_CONTENT}}
+</section>
+
+<!-- ═══════════════════════════════════════════════════════════
+     CHAPTER 02 · DIGITAL ASSETS · נכסים דיגיטליים
+     ═══════════════════════════════════════════════════════════ -->
+
+<section class="chapter">
+  <div class="chapter-head">
+    <div class="chapter-pill">
+      <span class="num">CHAPTER 02</span>
+      <span class="name">נכסים דיגיטליים</span>
+    </div>
+    <div class="chapter-en">Digital Assets</div>
+  </div>
+
+  {{CHAPTER_02_CONTENT}}
+</section>
+
+<!-- Additional chapters follow same pattern:
+     CHAPTER_03 — Client Content · תוכן הלקוח
+     CHAPTER_04 — Local Market · שוק ישראל
+     CHAPTER_05 — Global Market · שוק גלובלי
+     CHAPTER_06 — Video Deep Analysis · ניתוח וידאו עומק
+     CHAPTER_07 — Trends · טרנדים וסאונדים
+     CHAPTER_08 — Visual Identity · זהות ויזואלית
+     CHAPTER_09 — Brand Voice · טון ושפה
+     CHAPTER_10 — SWOT · ניתוח SWOT
+     CHAPTER_11 — Action Plan · תכנית פעולה
+     CHAPTER_12 — Shoot Day · יום צילום
+     CHAPTER_13 — Content Calendar · גאנט תוכן
+-->
+
+{{REMAINING_CHAPTERS}}
+
+<footer>
+  <div class="mark">CP</div>
+  <div>Creative People · Brand Agency</div>
+  <div style="margin-top: 6px;">{{REPORT_DATE}} · {{REPORT_VERSION}} · creativepeople.co.il</div>
+</footer>
+
+</body>
+</html>

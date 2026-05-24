@@ -1,0 +1,30 @@
+# Secrets
+.mcp.json
+.env
+.env.local
+*.token
+*credentials*.json
+
+# OS noise
+.DS_Store
+Thumbs.db
+
+# Editors
+.vscode/
+.idea/
+
+# Node
+node_modules/
+
+# Python
+__pycache__/
+*.pyc
+venv/
+.venv/
+
+# Output of test runs
+clients/*/02-analysis/
+clients/*/02b-video-deep/
+clients/*/03-brand/
+clients/*/04-deliverables/
+!clients/digital-hunters-example/

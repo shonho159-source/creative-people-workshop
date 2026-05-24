@@ -1,0 +1,540 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>{{CLIENT_NAME}} — אסטרטגיית תוכן · Creative People</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500;600;700&family=Heebo:wght@300;400;500;600;700;800;900&family=Assistant:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <base target="_blank">
+  <style>
+    :root {
+      --ink: #0a0a0a;
+      --ink-soft: #2a2a2a;
+      --muted: #6e6e6e;
+      --muted-soft: #9a9a9a;
+      --line: #d8d8d8;
+      --line-soft: #ececec;
+      --paper: #ffffff;
+      --paper-warm: #faf9f6;
+      --brand-primary: {{BRAND_PRIMARY}};
+      --brand-deep: {{BRAND_DEEP}};
+      --brand-secondary: {{BRAND_SECONDARY}};
+      --brand-accent: {{BRAND_ACCENT}};
+      --serif: 'Cormorant Garamond', 'Times New Roman', serif;
+      --he-display: 'Heebo', 'Assistant', system-ui, sans-serif;
+      --he-body: 'Assistant', 'Heebo', system-ui, sans-serif;
+      --gutter: clamp(24px, 4vw, 64px);
+      --max-w: 1200px;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: var(--he-body);
+      color: var(--ink);
+      background: var(--paper-warm);
+      line-height: 1.7;
+      direction: rtl;
+      text-align: right;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* COVER - עם אלמנטים גרפיים */
+    .cover {
+      min-height: 100vh;
+      padding: var(--gutter);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      position: relative;
+      overflow: hidden;
+      background: var(--paper);
+    }
+
+    /* SVG pattern רקע */
+    .cover-pattern {
+      position: absolute;
+      inset: 0;
+      z-index: 0;
+      opacity: 0.07;
+      pointer-events: none;
+    }
+
+    /* תמונת רקע מהאתר */
+    .cover-bg-image {
+      position: absolute;
+      inset: 0;
+      z-index: 0;
+      background-image: {{COVER_BACKGROUND_IMAGE}};
+      background-size: cover;
+      background-position: center;
+      opacity: 0.10;
+      filter: blur(2px);
+    }
+
+    /* gradient mesh נוסף */
+    .cover-mesh {
+      position: absolute;
+      inset: 0;
+      z-index: 0;
+      background:
+        radial-gradient(circle at 20% 30%, var(--brand-primary) 0%, transparent 40%),
+        radial-gradient(circle at 80% 70%, var(--brand-accent) 0%, transparent 40%),
+        radial-gradient(circle at 50% 50%, var(--brand-secondary) 0%, transparent 50%);
+      opacity: 0.08;
+      pointer-events: none;
+    }
+
+    .cover-inner { position: relative; z-index: 2; max-width: var(--max-w); margin: 0 auto; width: 100%; }
+
+    .cover-top { display: flex; justify-content: space-between; align-items: flex-start; }
+    .cp-logo {
+      font-family: var(--serif);
+      font-weight: 500;
+      font-size: 22px;
+      letter-spacing: 0.06em;
+      color: var(--ink);
+      position: relative;
+    }
+    .cp-logo::before {
+      content: '';
+      position: absolute;
+      top: -8px;
+      right: -8px;
+      width: 8px;
+      height: 8px;
+      border-top: 1px solid var(--brand-primary);
+      border-right: 1px solid var(--brand-primary);
+    }
+    .cp-logo::after {
+      content: '';
+      position: absolute;
+      bottom: -12px;
+      left: -8px;
+      width: 8px;
+      height: 8px;
+      border-bottom: 1px solid var(--brand-primary);
+      border-left: 1px solid var(--brand-primary);
+    }
+    .cp-logo small { font-size: 10px; letter-spacing: 0.4em; display: block; margin-top: 4px; font-family: var(--he-body); color: var(--muted); }
+
+    .cover-date {
+      font-size: 12px;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: var(--muted);
+      text-align: left;
+    }
+    .cover-date small { display: block; font-size: 10px; opacity: 0.6; margin-top: 4px; }
+
+    .cover-main { text-align: center; margin: 14vh auto 0; max-width: 900px; }
+
+    .cover-for {
+      display: inline-block;
+      border: 1px solid var(--ink);
+      border-radius: 999px;
+      padding: 6px 22px;
+      font-family: var(--serif);
+      font-size: 14px;
+      letter-spacing: 0.25em;
+      margin-bottom: 32px;
+      position: relative;
+    }
+    .cover-for::before, .cover-for::after {
+      content: '';
+      position: absolute;
+      top: 50%;
+      width: 60px;
+      height: 1px;
+      background: var(--ink);
+    }
+    .cover-for::before { right: 100%; margin-right: 16px; }
+    .cover-for::after { left: 100%; margin-left: 16px; }
+
+    .cover-title {
+      font-family: var(--he-display);
+      font-weight: 800;
+      font-size: clamp(56px, 9vw, 128px);
+      line-height: 0.95;
+      letter-spacing: -0.03em;
+      color: var(--ink);
+      margin-bottom: 24px;
+    }
+    .cover-subtitle {
+      font-family: var(--serif);
+      font-style: italic;
+      font-size: clamp(20px, 2.4vw, 32px);
+      color: var(--brand-primary);
+      font-weight: 400;
+      max-width: 720px;
+      margin: 0 auto 16px;
+      letter-spacing: 0.02em;
+    }
+    .cover-tagline {
+      font-size: 15px;
+      color: var(--muted);
+      max-width: 600px;
+      margin: 0 auto;
+    }
+
+    .cover-meta {
+      margin-top: 14vh;
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 24px;
+      font-size: 11px;
+      letter-spacing: 0.15em;
+      color: var(--muted);
+      text-transform: uppercase;
+      padding-top: 32px;
+      border-top: 1px solid var(--line);
+    }
+    .cover-meta-item strong { display: block; color: var(--ink); font-family: var(--serif); font-size: 18px; font-weight: 400; letter-spacing: normal; text-transform: none; margin-bottom: 4px; }
+
+    /* CHAPTER */
+    .chapter { max-width: var(--max-w); margin: 0 auto; padding: 80px var(--gutter); border-top: 1px solid var(--line); position: relative; }
+    .chapter-head {
+      display: flex;
+      align-items: baseline;
+      gap: 28px;
+      margin-bottom: 48px;
+      padding-bottom: 18px;
+      border-bottom: 2px solid var(--ink);
+    }
+    .chapter-num {
+      font-family: var(--serif);
+      font-size: 14px;
+      letter-spacing: 0.3em;
+      color: var(--brand-primary);
+      text-transform: uppercase;
+      font-weight: 500;
+      white-space: nowrap;
+    }
+    .chapter-he {
+      font-family: var(--he-display);
+      font-weight: 700;
+      font-size: clamp(28px, 4vw, 44px);
+      color: var(--ink);
+      letter-spacing: -0.01em;
+      flex: 1;
+    }
+
+    h3 { font-family: var(--he-display); font-weight: 600; font-size: 24px; margin-top: 48px; margin-bottom: 20px; color: var(--ink); letter-spacing: -0.01em; }
+    h4 { font-family: var(--he-display); font-weight: 600; font-size: 18px; margin-top: 28px; margin-bottom: 12px; color: var(--ink); }
+    p { margin-bottom: 16px; font-size: 16px; color: var(--ink-soft); max-width: 80ch; }
+    .lead { font-family: var(--serif); font-size: 22px; line-height: 1.5; color: var(--ink); font-style: italic; max-width: 80ch; margin-bottom: 32px; }
+    ul, ol { margin-right: 24px; margin-bottom: 24px; }
+    li { margin-bottom: 8px; color: var(--ink-soft); }
+    a { color: var(--brand-primary); text-decoration: none; border-bottom: 1px solid currentColor; }
+    a:hover { opacity: 0.7; }
+    strong { color: var(--ink); font-weight: 600; }
+    em { font-style: italic; color: var(--ink); }
+
+    /* PLATFORM SECTION */
+    .platform-section { margin: 24px 0; padding: 20px; background: var(--paper); border: 1px solid var(--line); border-radius: 4px; }
+    .platform-label {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      font-family: var(--serif);
+      font-size: 14px;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--brand-primary);
+      margin: 0 0 16px 0;
+      padding: 4px 12px;
+      border: 1px solid var(--brand-primary);
+      border-radius: 999px;
+    }
+    .platform-label::before {
+      content: '';
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--brand-primary);
+    }
+
+    /* STATS */
+    .stat-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 0; margin: 32px 0; border-top: 1px solid var(--ink); border-bottom: 1px solid var(--ink); }
+    .stat { padding: 28px 24px; border-left: 1px solid var(--line); }
+    .stat:first-child { border-left: none; }
+    .stat-label { font-size: 11px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--muted); margin-bottom: 12px; }
+    .stat-value { font-family: var(--serif); font-size: 40px; font-weight: 500; line-height: 1; color: var(--ink); }
+    .stat-sub { font-size: 12px; color: var(--muted); margin-top: 8px; }
+
+    /* NICHE SECTION */
+    .niche-section { margin: 48px 0; padding: 36px; background: var(--paper); border: 1px solid var(--line); border-radius: 2px; }
+    .niche-label {
+      display: inline-flex; align-items: center; gap: 8px;
+      font-family: var(--serif); font-size: 12px; letter-spacing: 0.25em; text-transform: uppercase;
+      color: var(--brand-primary); padding: 6px 16px;
+      border: 1px solid var(--brand-primary); border-radius: 999px; margin-bottom: 24px;
+    }
+    .niche-section h3 { margin-top: 0; }
+
+    /* TABLES */
+    table { width: 100%; border-collapse: collapse; margin: 24px 0; font-size: 14px; background: var(--paper); }
+    th, td { text-align: right; padding: 14px 12px; border-bottom: 1px solid var(--line); vertical-align: top; }
+    th { font-weight: 500; color: var(--muted); font-size: 11px; letter-spacing: 0.15em; text-transform: uppercase; border-bottom: 2px solid var(--ink); }
+    tr:last-child td { border-bottom: none; }
+    .badge { display: inline-block; padding: 2px 10px; border-radius: 999px; font-size: 11px; font-weight: 500; }
+    .badge-direct { background: #fef2f2; color: #991b1b; border: 1px solid #fca5a5; }
+    .badge-indirect { background: #fffbeb; color: #8b5e00; border: 1px solid #fde68a; }
+    .badge-inspiration { background: #eff6ff; color: #1e40af; border: 1px solid #93c5fd; }
+
+    /* POST CARDS */
+    .post-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px; margin: 24px 0; }
+    .post-card { background: var(--paper); border: 1px solid var(--line); padding: 20px; transition: border-color 0.2s, transform 0.2s; }
+    .post-card:hover { border-color: var(--brand-primary); transform: translateY(-2px); }
+    .post-meta { display: flex; justify-content: space-between; font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); margin-bottom: 12px; }
+    .post-hook { font-family: var(--he-display); font-size: 16px; font-weight: 500; line-height: 1.4; color: var(--ink); margin-bottom: 12px; }
+    .post-stats { display: flex; gap: 16px; font-size: 13px; color: var(--ink-soft); margin-bottom: 12px; }
+    .post-stats span strong { font-family: var(--serif); font-size: 16px; color: var(--brand-primary); }
+    .post-link { display: inline-block; font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--brand-primary); border-bottom: 1px solid var(--brand-primary); }
+
+    /* VIDEO DEEP */
+    .video-deep { background: var(--paper); border: 1px solid var(--line); padding: 32px; margin: 24px 0; position: relative; }
+    .video-deep::before {
+      content: ''; position: absolute; top: 0; right: 0; width: 4px; height: 100%; background: var(--brand-primary);
+    }
+    .video-deep-source { font-family: var(--serif); font-size: 13px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--brand-primary); margin-bottom: 8px; }
+    .video-deep-hook { font-family: var(--he-display); font-size: 22px; font-weight: 500; line-height: 1.35; color: var(--ink); margin-bottom: 12px; }
+    .video-deep-meta { font-size: 13px; color: var(--muted); margin-bottom: 20px; }
+    .video-deep-structure { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 16px; margin: 20px 0; padding: 18px; background: var(--paper-warm); border-right: 3px solid var(--brand-primary); }
+    .video-deep-structure div { font-size: 13px; color: var(--ink-soft); }
+    .video-deep-structure strong { display: block; font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); margin-bottom: 4px; }
+    .video-deep-takeaway { background: var(--paper-warm); padding: 18px; margin-top: 18px; border-radius: 2px; }
+    .video-deep-takeaway strong { display: block; font-size: 11px; letter-spacing: 0.15em; text-transform: uppercase; color: var(--brand-primary); margin-bottom: 8px; }
+    .video-deep-links { margin-top: 16px; font-size: 13px; display: flex; gap: 20px; }
+
+    /* TRENDS */
+    .trend-card { display: grid; grid-template-columns: 60px 1fr; gap: 24px; padding: 32px 0; border-bottom: 1px solid var(--line); }
+    .trend-card:last-child { border-bottom: none; }
+    .trend-num { font-family: var(--serif); font-size: 48px; font-weight: 500; line-height: 1; color: var(--brand-primary); }
+    .trend-card h4 { margin-top: 0; font-size: 22px; }
+    .trend-videos { display: flex; flex-direction: column; gap: 8px; margin: 16px 0; }
+    .trend-video-link {
+      display: flex; align-items: center; gap: 12px;
+      padding: 10px 14px;
+      background: var(--paper-warm);
+      border-right: 3px solid var(--brand-primary);
+      font-size: 14px;
+      transition: background 0.2s;
+    }
+    .trend-video-link:hover { background: var(--line-soft); }
+
+    /* SWOT */
+    .swot-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin: 32px 0; }
+    .swot-cell { padding: 24px; background: var(--paper); border: 1px solid var(--line); }
+    .swot-cell h4 { font-family: var(--serif); font-size: 14px; letter-spacing: 0.2em; text-transform: uppercase; margin-top: 0; margin-bottom: 16px; padding-bottom: 12px; border-bottom: 1px solid var(--line); }
+    .swot-cell.strong h4 { color: #1f6f43; border-color: #1f6f43; }
+    .swot-cell.weak h4 { color: #8b1e3f; border-color: #8b1e3f; }
+    .swot-cell.opp h4 { color: var(--brand-primary); border-color: var(--brand-primary); }
+    .swot-cell.threat h4 { color: #8b5e00; border-color: #8b5e00; }
+
+    /* ACTIONS */
+    .actions-list { counter-reset: action; margin: 24px 0; }
+    .action-item { counter-increment: action; display: grid; grid-template-columns: 80px 1fr; gap: 24px; padding: 36px 0; border-bottom: 1px solid var(--line); }
+    .action-item:last-child { border-bottom: none; }
+    .action-item::before { content: counter(action, decimal-leading-zero); font-family: var(--serif); font-size: 56px; font-weight: 400; line-height: 1; color: var(--brand-primary); }
+    .action-item h4 { font-size: 22px; margin-top: 0; margin-bottom: 8px; }
+    .action-tags { display: flex; gap: 12px; margin-top: 16px; flex-wrap: wrap; }
+    .action-tag { font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; padding: 4px 12px; background: var(--paper-warm); border: 1px solid var(--line); color: var(--muted); }
+    .action-tag.kpi { color: var(--brand-primary); border-color: var(--brand-primary); }
+    .action-tag.niche { color: var(--brand-accent); border-color: var(--brand-accent); }
+
+    /* QUOTE */
+    blockquote { font-family: var(--serif); font-size: 28px; line-height: 1.4; font-style: italic; color: var(--ink); margin: 48px 0; padding: 0 40px; border-right: 3px solid var(--brand-primary); max-width: 80ch; }
+    blockquote cite { display: block; font-family: var(--he-body); font-style: normal; font-size: 13px; letter-spacing: 0.15em; text-transform: uppercase; color: var(--muted); margin-top: 16px; }
+
+    /* SWATCHES */
+    .swatch-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 16px; margin: 32px 0; }
+    .swatch { background: var(--paper); border: 1px solid var(--line); overflow: hidden; }
+    .swatch-color { height: 120px; }
+    .swatch-info { padding: 16px; }
+    .swatch-role { font-size: 11px; letter-spacing: 0.15em; text-transform: uppercase; color: var(--muted); margin-bottom: 4px; }
+    .swatch-hex { font-family: 'SF Mono', monospace; font-size: 13px; font-weight: 500; }
+
+    /* ANTI-TONE */
+    .anti-tone { background: var(--paper); border-right: 3px solid #8b1e3f; padding: 28px 32px; margin: 32px 0; }
+    .anti-tone h4 { font-family: var(--serif); font-size: 14px; letter-spacing: 0.2em; text-transform: uppercase; color: #8b1e3f; margin-top: 0; margin-bottom: 16px; }
+    .anti-tone ul { padding-right: 20px; }
+
+    /* REMEMBER (זכור לטובה) */
+    .remember { background: var(--paper); border: 1px dashed var(--brand-primary); padding: 28px 32px; margin: 32px 0; border-radius: 4px; }
+    .remember-label { font-family: var(--serif); font-size: 12px; letter-spacing: 0.25em; text-transform: uppercase; color: var(--brand-primary); margin-bottom: 12px; }
+
+    /* DIVIDER */
+    .divider {
+      display: flex; align-items: center; gap: 16px; margin: 48px 0; color: var(--muted);
+      font-family: var(--serif); font-size: 12px; letter-spacing: 0.3em; text-transform: uppercase;
+    }
+    .divider::before, .divider::after { content: ''; flex: 1; height: 1px; background: var(--line); }
+
+    /* FOOTER */
+    footer { max-width: var(--max-w); margin: 0 auto; padding: 60px var(--gutter); border-top: 1px solid var(--ink); text-align: center; font-size: 12px; letter-spacing: 0.15em; text-transform: uppercase; color: var(--muted); }
+    footer .cp-mark { font-family: var(--serif); font-size: 32px; letter-spacing: 0.1em; color: var(--ink); margin-bottom: 12px; text-transform: none; }
+
+    @media print {
+      body { background: var(--paper); }
+      .chapter { padding: 40px var(--gutter); page-break-inside: avoid; }
+      .cover { page-break-after: always; min-height: 95vh; }
+      a { color: var(--ink); text-decoration: underline; }
+      .post-card, .video-deep, .niche-section, .swot-cell, .platform-section, .remember { page-break-inside: avoid; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- COVER עם אלמנטים גרפיים -->
+<section class="cover">
+  <div class="cover-bg-image"></div>
+  <div class="cover-mesh"></div>
+  <svg class="cover-pattern" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+      <pattern id="dotgrid" x="0" y="0" width="40" height="40" patternUnits="userSpaceOnUse">
+        <circle cx="20" cy="20" r="1" fill="#000" />
+      </pattern>
+      <pattern id="diagonals" x="0" y="0" width="80" height="80" patternUnits="userSpaceOnUse">
+        <line x1="0" y1="80" x2="80" y2="0" stroke="#000" stroke-width="0.3" />
+      </pattern>
+    </defs>
+    <rect width="100%" height="100%" fill="url(#dotgrid)" />
+    <rect width="100%" height="100%" fill="url(#diagonals)" />
+  </svg>
+
+  <div class="cover-inner">
+    <div class="cover-top">
+      <div class="cp-logo">CREATIVE PEOPLE<small>BRAND AGENCY</small></div>
+      <div class="cover-date">{{DATE}}<small>גרסה 3.0</small></div>
+    </div>
+    <div class="cover-main">
+      <div class="cover-for">FOR · עבור</div>
+      <h1 class="cover-title">{{CLIENT_NAME}}</h1>
+      <div class="cover-subtitle">{{CLIENT_SUBTITLE}}</div>
+      <div class="cover-tagline">{{CLIENT_TAGLINE}}</div>
+    </div>
+    <div class="cover-meta">
+      <div class="cover-meta-item"><strong>אסטרטגיית תוכן</strong>13 פרקים</div>
+      <div class="cover-meta-item"><strong>ניתוח שוק</strong>ישראל + גלובלי</div>
+      <div class="cover-meta-item"><strong>ניתוח וידאו עומק</strong>9 רילסים</div>
+    </div>
+  </div>
+</section>
+
+<!-- ============== חלקים — לכל פרק כותרת בעברית בלבד ============== -->
+
+<section class="chapter">
+  <div class="chapter-head">
+    <div class="chapter-num">חלק 01</div>
+    <h2 class="chapter-he">סיכום מנהל</h2>
+  </div>
+  {{EXEC_SUMMARY}}
+</section>
+
+<section class="chapter">
+  <div class="chapter-head">
+    <div class="chapter-num">חלק 02</div>
+    <h2 class="chapter-he">נכסים דיגיטליים</h2>
+  </div>
+  {{DIGITAL_ASSETS}}
+</section>
+
+<section class="chapter">
+  <div class="chapter-head">
+    <div class="chapter-num">חלק 03</div>
+    <h2 class="chapter-he">תוכן הלקוח — מה כבר עובד</h2>
+  </div>
+  {{CLIENT_CONTENT}}
+</section>
+
+<section class="chapter">
+  <div class="chapter-head">
+    <div class="chapter-num">חלק 04</div>
+    <h2 class="chapter-he">שוק ישראל — מתחרים וטרנדים</h2>
+  </div>
+  {{LOCAL_MARKET}}
+</section>
+
+<section class="chapter">
+  <div class="chapter-head">
+    <div class="chapter-num">חלק 05</div>
+    <h2 class="chapter-he">שוק גלובלי — טרנדים והזדמנויות</h2>
+  </div>
+  {{GLOBAL_MARKET}}
+</section>
+
+<section class="chapter">
+  <div class="chapter-head">
+    <div class="chapter-num">חלק 06</div>
+    <h2 class="chapter-he">ניתוח וידאו עומק</h2>
+  </div>
+  <p class="lead">תשעה רילסים מובילים פורקו לפי שנייה — תמלול מלא, ניתוח ויזואלי, מבנה דרמטי, וההוק המדויק. זה ה-database שמשמש את תסריטי הצילום הבאים.</p>
+  {{VIDEO_DEEP}}
+</section>
+
+<section class="chapter">
+  <div class="chapter-head">
+    <div class="chapter-num">חלק 07</div>
+    <h2 class="chapter-he">טרנדים וסאונדים</h2>
+  </div>
+  {{TRENDS}}
+</section>
+
+<section class="chapter">
+  <div class="chapter-head">
+    <div class="chapter-num">חלק 08</div>
+    <h2 class="chapter-he">זהות ויזואלית</h2>
+  </div>
+  {{VISUAL}}
+</section>
+
+<section class="chapter">
+  <div class="chapter-head">
+    <div class="chapter-num">חלק 09</div>
+    <h2 class="chapter-he">טון ושפה</h2>
+  </div>
+  {{VOICE}}
+</section>
+
+<section class="chapter">
+  <div class="chapter-head">
+    <div class="chapter-num">חלק 10</div>
+    <h2 class="chapter-he">חוזקות, חולשות, הזדמנויות, איומים</h2>
+  </div>
+  {{SWOT}}
+</section>
+
+<section class="chapter">
+  <div class="chapter-head">
+    <div class="chapter-num">חלק 11</div>
+    <h2 class="chapter-he">תכנית פעולה</h2>
+  </div>
+  {{ACTIONS}}
+</section>
+
+<section class="chapter">
+  <div class="chapter-head">
+    <div class="chapter-num">חלק 12</div>
+    <h2 class="chapter-he">הצעה ליום צילום</h2>
+  </div>
+  {{SHOOT_DAY}}
+</section>
+
+<section class="chapter">
+  <div class="chapter-head">
+    <div class="chapter-num">חלק 13</div>
+    <h2 class="chapter-he">גאנט תוכן ראשוני</h2>
+  </div>
+  {{CONTENT_GANTT}}
+</section>
+
+<footer>
+  <div class="cp-mark">CP</div>
+  <div>Creative People · Brand Agency</div>
+  <div style="margin-top: 8px;">{{DATE}} · creativepeople.co.il</div>
+</footer>
+
+</body>
+</html>
