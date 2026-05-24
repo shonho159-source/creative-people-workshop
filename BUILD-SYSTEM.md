@@ -343,6 +343,23 @@ Phase 4 (sequential)
 - **ffmpeg** — חילוץ אודיו + frames. התקנה: `brew install ffmpeg`
 - **whisper** (OpenAI) — תמלול. התקנה: `pip install -U openai-whisper`
 
+### מדיניות retry על Apify MCP (חובה לכל סוכן שמשתמש ב-Apify)
+
+**Fail-fast — מקסימום 2 ניסיונות לכל פעולת Apify:**
+
+1. ניסיון 1 — `mcp__apify__call-actor` רגיל
+2. אם נכשל (timeout / שגיאת dataset / 500) — ניסיון 2 עם פרמטרים מינימליים יותר (פחות results, פחות depth)
+3. אם גם ניסיון 2 נכשל — **לעבור הלאה**, לא לנסות שוב
+
+תיעוד בקובץ הפלט: "Apify נכשל אחרי 2 ניסיונות בתאריך X. הסיבה: Y. ממשיך בלי נתוני המקור הזה."
+
+**אסור:**
+- ❌ לולאת retry של 3+ ניסיונות
+- ❌ לחזור על אותה פעולה עם אותם פרמטרים אחרי כישלון
+- ❌ לחכות יותר מ-60 שניות לתשובה אחת מ-Apify
+
+**הסיבה:** במקרים בהם Apify MCP מחזיר שגיאה (`get-dataset-items` עם dataset ID לא תקין, או actor שלא רץ עד הסוף), retry-ים נוספים מבזבזים 10+ דקות לבד. עדיף לעבור הלאה ולציין "לא נמצא" מאשר להיתקע.
+
 ### Skills (חובה להתקין לפני סדנה)
 - **hebrew-content-writer** — ליטוש עברית תקנית (פאס סופי בכל סוכן שיוצר טקסט גלוי)
 - **hebrew-writer** (v5) — אנטי AI-detection, anti-em-dash, anti-blacklist
@@ -1407,40 +1424,60 @@ mcp__apify__call-actor actor: <chosen-actor> input: { url: "<URL>" }
 - **אסור לסיים Phase 2.5 עם פחות מ-9 ניתוחי וידאו**
 - רק במקרה אחרון — לכתוב `SKIPPED.txt` עם הסבר מפורט מה ננסה לעשות
 
-### שלב C: חילוץ אודיו + frames
-```bash
-# אודיו לתמלול
-ffmpeg -i clients/<slug>/02b-video-deep/<source>/<video-id>/video.mp4 \
-  -vn -ar 16000 -ac 1 -y \
-  clients/<slug>/02b-video-deep/<source>/<video-id>/audio.wav
+### שלב C: חילוץ אודיו + frames — מקביל ל-3 וידאו
 
-# Frames - אופטימיזציה: דגימה כל 2 שניות (fps=0.5) כברירת מחדל
-# חיסכון: ~50% מספר ה-frames לרינדור multimodal, בלי פגיעה באיכות
-# (תזוזה ויזואלית בוידאו בין-frame של 1 שנייה מינימלית)
-#
-# אם הוידאו < 15 שניות — frame כל שנייה (fps=1)
-# אחרת — frame כל 2 שניות (fps=0.5)  ← ברירת מחדל
-# אם הוידאו > 90 שניות — frame כל 3 שניות (fps=0.333)
-ffmpeg -i clients/<slug>/02b-video-deep/<source>/<video-id>/video.mp4 \
-  -vf "fps=<fps>" -y \
-  clients/<slug>/02b-video-deep/<source>/<video-id>/frames/frame-%03d.jpg
+**עיקרון:** אחרי שכל 3 וידאו של קבוצה הורדו, ffmpeg רץ במקביל ל-3 שלהם. חיסכון: 6-12 דק׳ ב-Phase 2.5.
+
+**קבע fps לפי אורך הוידאו** (משתמש ב-`ffprobe -show_format` או מהמידע ב-`02-analysis/*-social.md`):
+- < 15 שניות → fps=1 (frame לכל שנייה)
+- 15-90 שניות → **fps=0.5** (כל 2 שניות) — ברירת מחדל
+- > 90 שניות → fps=0.333 (כל 3 שניות)
+
+```bash
+# קבוצה client (3 וידאו במקביל)
+SRC=client
+for i in 1 2 3; do
+  VDIR="clients/<slug>/02b-video-deep/$SRC/video-$i"
+  FPS=$(ffprobe -v 0 -select_streams v:0 -show_entries stream=duration -of csv=p=0 "$VDIR/video.mp4" | awk '{ if ($1 < 15) print 1; else if ($1 > 90) print 0.333; else print 0.5 }')
+  # אודיו + frames במקביל באותו תהליך
+  (
+    ffmpeg -i "$VDIR/video.mp4" -vn -ar 16000 -ac 1 -y "$VDIR/audio.wav"
+    ffmpeg -i "$VDIR/video.mp4" -vf "fps=$FPS" -y "$VDIR/frames/frame-%03d.jpg"
+  ) &
+done
+wait  # ממתין לסיום 3 הוידאו של הקבוצה
+
+# חזרי על אותו דפוס ל-local ול-global
 ```
 
-קבע fps לפי `ffprobe` או לפי המידע ב-`02-analysis/*-social.md` שכבר ידוע על אורך הוידאו.
+**הערה:** כל וידאו רץ עם אודיו ו-frames ברצף (בתוך התהליך עצמו), אבל 3 הוידאו של הקבוצה רצים במקביל זה לזה.
 
-**טיפ נוסף לאופטימיזציה:** ffmpeg מרובה במקביל גם הוא בטוח. אם רוצים האצה נוספת — אפשר להריץ 3 ffmpegים במקביל (אחד לכל וידאו בקבוצה) באותו דפוס של `&` + `wait`.
+### שלב D: תמלול עם whisper — מקביל ל-3 וידאו
 
-### שלב D: תמלול עם whisper
+**אזהרה לפני שמתחילים:** Whisper small דורש ~1GB RAM כשטוען מודל. 3 במקביל = ~3GB. בטוח על MBP 16GB+. במחשבים עם 8GB — להריץ 2 במקביל במקום 3.
+
 ```bash
-# זיהוי שפה: client = עברית, global = אנגלית, local = עברית (ברירת מחדל)
-whisper clients/<slug>/02b-video-deep/<source>/<video-id>/audio.wav \
-  --model small \
-  --language he \  # או en לסרטונים בחו"ל
-  --output_dir clients/<slug>/02b-video-deep/<source>/<video-id>/ \
-  --output_format vtt
+# קבוצה client — 3 whisper במקביל
+SRC=client
+for i in 1 2 3; do
+  VDIR="clients/<slug>/02b-video-deep/$SRC/video-$i"
+  # קביעת שפה לפי source: client/local=he, global=en
+  LANG="he"
+  [ "$SRC" = "global" ] && LANG="en"
+  whisper "$VDIR/audio.wav" \
+    --model small \
+    --language $LANG \
+    --output_dir "$VDIR/" \
+    --output_format vtt &
+done
+wait  # ממתין לסיום 3 התמלולים של הקבוצה
+
+# חזרי על אותו דפוס ל-local ול-global
 ```
 
-חלופה: אם `whisper` לא עובד — `Skill(hyperframes-media)` עם פקודת `transcribe`.
+**אם מחשב חלש (8GB RAM)** — להוריד למקבילי-2: להפעיל את 1+2 ביחד, לחכות, ואז 3.
+
+חלופה אם `whisper` לא עובד: `Skill(hyperframes-media)` עם פקודת `transcribe` (אבל בצורה סדרתית — לא תומך במקבילי).
 
 ### שלב E: קריאת ה-frames ל-multimodal analysis
 
