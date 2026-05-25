@@ -376,12 +376,32 @@
     footer { max-width: var(--max-w); margin: 0 auto; padding: 60px var(--gutter); border-top: 1px solid var(--ink); text-align: center; font-size: 12px; letter-spacing: 0.15em; text-transform: uppercase; color: var(--muted); }
     footer .cp-mark { font-family: var(--serif); font-size: 32px; letter-spacing: 0.1em; color: var(--ink); margin-bottom: 12px; text-transform: none; }
 
+    /* PDF Page setup — A4 with no margins (full bleed) */
+    @page { size: A4; margin: 0; }
+
     @media print {
-      body { background: var(--paper); }
-      .chapter { padding: 40px var(--gutter); page-break-inside: avoid; }
-      .cover { page-break-after: always; min-height: 95vh; }
+      body { background: var(--paper); margin: 0; padding: 0; }
+      html { margin: 0; padding: 0; }
+
+      /* Cover fills full page */
+      .cover { page-break-after: always; height: 100vh; min-height: 100vh; padding: var(--gutter); }
+
+      /* Chapter padding (no page-break-inside avoid on chapter — too restrictive) */
+      .chapter { padding: 40px var(--gutter); }
+
+      /* Hyperlinks stay clickable + visible */
       a { color: var(--ink); text-decoration: underline; }
-      .post-card, .video-deep, .niche-section, .swot-cell, .platform-section, .remember { page-break-inside: avoid; }
+
+      /* Headings stuck to next content — prevents orphaned headers */
+      h1, h2, h3, h4, h5 { page-break-after: avoid; break-after: avoid; }
+      h3, h4 { page-break-before: auto; }
+      h3 + p, h3 + table, h3 + ul, h3 + ol, h3 + .platform-section, h3 + .video-deep, h4 + p, h4 + table, h4 + ul { page-break-before: avoid; break-before: avoid; }
+
+      /* Body text — no 1-2 line orphans */
+      p, li { orphans: 3; widows: 3; }
+
+      /* Blocks that must stay together */
+      .post-card, .video-deep, .niche-section, .swot-cell, .platform-section, .remember, .stat-row, table, .video-deep-structure, .video-deep-takeaway, .action-item { page-break-inside: avoid; break-inside: avoid; }
     }
   </style>
 </head>
