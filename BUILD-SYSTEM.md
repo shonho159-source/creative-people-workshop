@@ -75,11 +75,6 @@
 
 - כל קובץ MD חייב להישמר **אחד-לאחד** מהתוכן בהמשך. אם יש front-matter (`---`) — לשמור.
 - שמות תיקיות וקבצים באנגלית. תוכן בעברית.
-- אם הלקוחה עוד לא בחרה — צרי placeholder: `clients/example-client/00-intake/` עם הודעת README קצרה שתסביר לי איפה לשים את ה-PDF.
-- בסיום — הציגי לי 3 פעולות אפשריות:
-  - `/onboard-client <slug>` להפעלת המערכת
-  - `/write-shooting-scripts <slug>` (אחרי דוח)
-  - `/generate-content-gantt <slug>` (אחרי דוח)
 
 ### Self-Check לפני סיום
 
@@ -214,6 +209,19 @@ data_sources: [...]
 - **Facebook** (`apify/facebook-posts-scraper` או `apify/facebook-pages-scraper`)
 
 אם פלטפורמה ריקה אצל הלקוח — לציין במפורש "לא קיים", לא לדלג בשתיקה.
+
+**פלטפורמות אסורות (לא לחקור ולא לבחור וידאו):**
+- ❌ **YouTube** — פורמט long-form, איטי להוריד, לא רלוונטי לסושיאל קצר. אם נכס YouTube של הלקוחה מופיע בטופס intake — לציין שקיים ב-CLIENT.md, אבל לא לחקור אותו ולא לבחור ממנו וידאו ל-Phase 2.5.
+- ❌ Twitter/X, Threads, LinkedIn (אלא אם הלקוחה ביקשה מפורשות)
+
+**הגנה ב-video-deep-analyzer** (Phase 2.5):
+כשהוא קורא את `*-top-videos.txt`, לפני הורדה — לסנן URLs לפלטפורמות מותרות:
+```bash
+# פילטר ב-bash:
+grep -E 'instagram\.com/(p|reel)/|tiktok\.com/@[^/]+/video/|facebook\.com/(watch|reel)' \
+  client-top-videos.txt > client-top-videos-filtered.txt
+```
+אם הקובץ המסונן ריק → דווח לאורקסטרטור: "אין וידאו תקין ל-source הזה".
 
 ### 11. לינקים מדויקים לפוסטים — לא לפרופילים
 
@@ -752,7 +760,22 @@ tools: Read, Write, mcp__apify__call-actor, mcp__apify__search-actors, mcp__apif
 - **חולשה ברורה:** מה חסר לחלוטין (לדוגמא: 0 פוסטים של המייסד)
 
 ### שלב 6: בחירת Top 3 וידאו ל-Phase 2.5
-מתוך כל הפוסטים — בחר את **3 הוידאו** עם ה-engagement הגבוה ביותר (גם אם הם מנישות שונות).
+
+**חובה — סינון פלטפורמות מותרות:**
+- ✅ Instagram (`/p/` או `/reel/`)
+- ✅ TikTok (`/@handle/video/`)
+- ✅ Facebook (`/watch/?v=` או `/reel/`)
+- ❌ **YouTube אסור** (אורך וידאו ארוך, איטי להורדה, לא רלוונטי לסושיאל קצר)
+- ❌ Twitter/X, Threads, LinkedIn — לא לבחור
+
+מתוך הפוסטים בפלטפורמות המותרות **בלבד** — בחר את **3 הוידאו** עם ה-engagement הגבוה ביותר (גם אם הם מנישות שונות).
+
+אם הלקוחה מפרסמת בעיקר YouTube → חפש את 3 הוידאו המובילים שלה ב-IG/TikTok/FB. אם אין לה בכלל וידאו ב-3 הפלטפורמות האלה → לכתוב בקובץ `client-top-videos.txt`:
+```
+# NO_VIDEOS_FOUND - הלקוחה לא פעילה בוידאו ב-IG/TikTok/FB
+```
+ולציין זאת ב-CLIENT.md לדיווח אצל report-consolidator.
+
 שמור את ה-URLs שלהם בקובץ `clients/<client-slug>/02-analysis/client-top-videos.txt`:
 ```
 https://www.instagram.com/p/<shortCode1>/
@@ -950,7 +973,13 @@ mcp__apify__call-actor:
 
 ### שלב 7: בחירת Top 3 וידאו ל-Phase 2.5
 
-3 הוידאו עם ה-engagement הגבוה ביותר מתוך כל המתחרים (לא רק אינסטגרם — אפשר טיקטוק).
+**פלטפורמות מותרות בלבד:**
+- ✅ Instagram (`/p/` או `/reel/`)
+- ✅ TikTok (`/@handle/video/`)
+- ✅ Facebook (`/watch/?v=` או `/reel/`)
+- ❌ **YouTube אסור** (איטי, לא רלוונטי לפורמט סושיאל קצר)
+
+3 הוידאו עם ה-engagement הגבוה ביותר מתוך כל המתחרים בפלטפורמות המותרות **בלבד**. אם מתחרה פעיל בעיקר ב-YouTube → דלג עליו לטובת וידאו של IG/TikTok/FB ממתחרה אחר.
 
 שמור URLs ל-`clients/<client-slug>/02-analysis/local-top-videos.txt`.
 
@@ -1205,7 +1234,14 @@ client_niches: [...]
 ### טרנדים 2-5: ... (אותו פורמט)
 
 ## 3 הוידאו שנשמרו ל-Phase 2.5
-...
+
+**פלטפורמות מותרות לוידאו בלבד:**
+- ✅ Instagram (`/p/` או `/reel/`)
+- ✅ TikTok (`/@handle/video/`)
+- ✅ Facebook (`/watch/?v=` או `/reel/`)
+- ❌ **YouTube אסור** (איטי, פורמט long-form, לא רלוונטי לסושיאל קצר)
+
+אם מתחרה גלובלי פעיל בעיקר ב-YouTube → דלג עליו לטובת וידאו של IG/TikTok/FB ממתחרה אחר.
 
 ## רעיונות לעיבוד מקומי
 ...
@@ -1216,10 +1252,11 @@ client_niches: [...]
 1. **5 חשבונות גלובליים — חובה**
 2. **3 פלטפורמות חובה** (IG + TikTok + FB)
 3. **לינקים לפוסטים — לא לפרופילים**
-4. **5 טרנדים עם 2-3 סרטונים כל אחד** — לא רק מאמרים
-5. **לא לכלול תוכן הלקוח ב-"5 סוגי תוכן"** — רק במחקר
-6. **לקחת Anti-tone של הלקוח בחשבון**
-7. **עברית תקנית**
+4. **YouTube אסור לבחירת Top 3 וידאו** — רק IG/TikTok/FB
+5. **5 טרנדים עם 2-3 סרטונים כל אחד** — לא רק מאמרים
+6. **לא לכלול תוכן הלקוח ב-"5 סוגי תוכן"** — רק במחקר
+7. **לקחת Anti-tone של הלקוח בחשבון**
+8. **עברית תקנית**
 
 ## Self-Check Before Output
 
@@ -1429,7 +1466,9 @@ tools: Read, Write, Bash, Skill
 
 **עיקרון מרכזי: הורדה מקבילה.** במקום להוריד 9 וידאו ברצף (39 דק׳), נוריד 3 וידאו במקביל בכל פעם דרך bash `&` ו-`wait`. חיסכון: ~24 דק׳ בלי פגיעה באיכות.
 
-### שלב A: הכנת תיקיות עבודה (פעם אחת לכל ה-9)
+### שלב A: הכנת תיקיות עבודה + סינון URLs
+
+**A.1 — תיקיות:**
 ```bash
 for src in client local global; do
   for i in 1 2 3; do
@@ -1437,6 +1476,29 @@ for src in client local global; do
   done
 done
 ```
+
+**A.2 — סינון URLs מאסורות (קריטי, defense in depth):**
+
+הסוכנים שמייצרים את `*-top-videos.txt` אמורים לא לכתוב YouTube — אבל אם בכל זאת נכנס, לסנן כאן לפני הורדה:
+
+```bash
+for src in client local global; do
+  SRC_FILE="clients/<slug>/02-analysis/${src}-top-videos.txt"
+  FILTERED="clients/<slug>/02-analysis/${src}-top-videos-filtered.txt"
+
+  # שמור רק IG/TikTok/FB
+  grep -E 'instagram\.com/(p|reel)/|tiktok\.com/@[^/]+/video/|facebook\.com/(watch|reel)' \
+    "$SRC_FILE" > "$FILTERED" || true
+
+  # ספור URLs תקינים
+  COUNT=$(wc -l < "$FILTERED")
+  if [ "$COUNT" -lt 1 ]; then
+    echo "⚠️ אין URLs תקינים ב-$src (סוננו YouTube/אחרים). דווח לאורקסטרטור."
+  fi
+done
+```
+
+**מהקובץ המסונן** קח את ה-URLs ל-yt-dlp בהמשך (לא מהקובץ המקורי).
 
 ### שלב B: הורדה מקבילית של 3 וידאו בכל פעם
 
