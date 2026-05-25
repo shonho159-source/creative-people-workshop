@@ -400,8 +400,17 @@
       /* Body text — no 1-2 line orphans */
       p, li { orphans: 3; widows: 3; }
 
-      /* Blocks that must stay together */
-      .post-card, .video-deep, .niche-section, .swot-cell, .platform-section, .remember, .stat-row, table, .video-deep-structure, .video-deep-takeaway, .action-item { page-break-inside: avoid; break-inside: avoid; }
+      /* Blocks that must stay together — comprehensive selector */
+      .post-card, .video-deep, .niche-section, .swot-cell, .platform-section,
+      .remember, .stat-row, table, tr, .video-deep-structure,
+      .video-deep-takeaway, .action-item, .trend-card, blockquote,
+      [class*="card"], [class*="-block"], [class*="-section"], [class*="-item"],
+      [class*="hook"], [class*="insight"], [class*="quote"], [class*="highlight"],
+      figure, pre, .stat
+      { page-break-inside: avoid; break-inside: avoid; }
+
+      /* Any styled box (dark background, border, etc.) */
+      div[style*="background"], div[style*="border"] { page-break-inside: avoid; break-inside: avoid; }
     }
   </style>
 </head>

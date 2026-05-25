@@ -658,8 +658,16 @@
       /* Orphan/widow control */
       p, li { orphans: 3; widows: 3; }
 
-      /* Multi-element blocks together */
-      .video-deep, .niche-section, .swot-cell, .platform-section, .stat-row, .swatch-grid, .swatch, .two-col, blockquote { page-break-inside: avoid; break-inside: avoid; }
+      /* Multi-element blocks together — comprehensive */
+      .video-deep, .niche-section, .swot-cell, .platform-section, .stat-row,
+      .swatch-grid, .swatch, .two-col, blockquote, table, tr,
+      [class*="card"], [class*="-block"], [class*="-section"], [class*="-item"],
+      [class*="hook"], [class*="insight"], [class*="quote"], [class*="highlight"],
+      figure, pre
+      { page-break-inside: avoid; break-inside: avoid; }
+
+      /* Any inline-styled box */
+      div[style*="background"], div[style*="border"] { page-break-inside: avoid; break-inside: avoid; }
     }
   </style>
 </head>
