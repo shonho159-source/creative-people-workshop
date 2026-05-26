@@ -211,17 +211,10 @@ data_sources: [...]
 אם פלטפורמה ריקה אצל הלקוח — לציין במפורש "לא קיים", לא לדלג בשתיקה.
 
 **פלטפורמות אסורות (לא לחקור ולא לבחור וידאו):**
-- ❌ **YouTube** — פורמט long-form, איטי להוריד, לא רלוונטי לסושיאל קצר. אם נכס YouTube של הלקוחה מופיע בטופס intake — לציין שקיים ב-CLIENT.md, אבל לא לחקור אותו ולא לבחור ממנו וידאו ל-Phase 2.5.
+- ❌ **YouTube** — לא לחקור ולא לבחור ממנו וידאו. אם נכס YouTube של הלקוחה מופיע בטופס intake — לציין שקיים ב-CLIENT.md בלבד.
 - ❌ Twitter/X, Threads, LinkedIn (אלא אם הלקוחה ביקשה מפורשות)
 
-**הגנה ב-video-deep-analyzer** (Phase 2.5):
-כשהוא קורא את `*-top-videos.txt`, לפני הורדה — לסנן URLs לפלטפורמות מותרות:
-```bash
-# פילטר ב-bash:
-grep -E 'instagram\.com/(p|reel)/|tiktok\.com/@[^/]+/video/|facebook\.com/(watch|reel)' \
-  client-top-videos.txt > client-top-videos-filtered.txt
-```
-אם הקובץ המסונן ריק → דווח לאורקסטרטור: "אין וידאו תקין ל-source הזה".
+> **הערה**: Phase 2.5 (video-deep-analyzer) הוסר מהפייפליין הראשי ב-מאי 2026. אם בכל זאת תפעילי את הסוכן ידנית — הוא כולל פילטר bash שמסנן YouTube אוטומטית.
 
 ### 11. לינקים מדויקים לפוסטים — לא לפרופילים
 
@@ -280,7 +273,6 @@ grep -E 'instagram\.com/(p|reel)/|tiktok\.com/@[^/]+/video/|facebook\.com/(watch
 - ❌ **לזהות מתחרה רק על בסיס מילת מפתח דומה** — "קורס אינסטגרם" ≠ "קורס שמשתמש באינסטגרם". לבדוק מה הוא מוכר.
 - ❌ **לכלול תוכן הלקוח ב-"5 סוגי תוכן מובילים"** — הסקציה הזו מהמחקר בלבד. תוכן הלקוח בסקציה "שלנו — זכור לטובה" נפרדת.
 - ❌ **לתת רק לינקים לאתרים בסקציית טרנדים** — לכל טרנד חייבים 2-3 סרטונים אמיתיים (IG/TikTok URLs)
-- ❌ **לסיים Phase 2.5 עם פחות מ-9 ניתוחי וידאו** — אם yt-dlp נכשל, להפעיל cookies fallback chain (3 ניסיונות). לא SKIPPED.
 - ❌ **לערבב פלטפורמות בטבלה אחת** — חלוקה ויזואלית לפי IG / TikTok / FB / LinkedIn
 - ❌ **כותרות פרקים באנגלית** — "חלק 01 · נכסים דיגיטליים", לא "CHAPTER 01 · DIGITAL ASSETS"
 - ❌ **לדבר על EBITDA, ROI, KPIs מורכבים** בתסריטים B2B אם המסר העיקרי הוא רגשי — כאב המייסד הוא ההוק, לא הנתונים
@@ -299,18 +291,19 @@ clients/
 └── <client-slug>/
     ├── 00-intake/    # PDF טופס אונבורדינג
     ├── CLIENT.md     # מסמך מרכזי - כולל niches[]
-    ├── 02-analysis/  # 4 קבצי ניתוח + 3 קבצי URLs לוידאו
-    ├── 02b-video-deep/  # 9 ניתוחי וידאו עומק (3 לקוח + 3 ישראל + 3 גלובלי)
+    ├── 02-analysis/  # 4 קבצי ניתוח
     ├── 03-brand/     # 2 קבצי מותג + screenshots
-    └── 04-deliverables/  # report.html + report.pdf + content-gantt (on-demand)
+    └── 04-deliverables/  # report.pdf + content-gantt (on-demand)
 templates/
 ├── report-template.html      # תבנית HTML RTL בסגנון Creative People
 └── reference-presentation-jeremy.pdf  # רפרנס סגנון
 ```
 
+> **הערה**: בעבר היה גם `02b-video-deep/` עם 9 ניתוחי וידאו עומק (Phase 2.5). הפאזה הוסרה ב-מאי 2026 כדי לקצר את זמן הריצה ולמקד את הדוח. הסוכן video-deep-analyzer עדיין קיים — ניתן להפעלה ידנית במקרה צורך.
+
 ---
 
-## הפייפליין (5 פאזות)
+## הפייפליין (4 פאזות)
 
 ```
 Phase 1 (sequential)
@@ -321,9 +314,6 @@ Phase 2 (4 in parallel)
   local-competitors-researcher
   global-competitors-researcher
   trends-researcher
-
-Phase 2.5 (sequential — batch על 9 URLs)
-  video-deep-analyzer
 
 Phase 3 (2 in parallel)
   visual-identity-extractor
@@ -457,8 +447,8 @@ status: complete | degraded | aborted
 ## הערות לדיבאג
 
 - כל סוכן שנכשל — לכתוב את הסיבה לקובץ הפלט שלו ולא להמשיך עם דאטה מומצא
-- ב-orchestrator `/onboard-client`: Phase 2 רץ 4-במקביל, Phase 3 רץ 2-במקביל. Phase 2.5 ו-4 סדרתיים
-- שגיאת yt-dlp על וידאו מוגן — להפעיל cookies fallback chain (3 ניסיונות לפי `video-deep-analyzer.md`)
+- ב-orchestrator `/onboard-client`: Phase 2 רץ 4-במקביל, Phase 3 רץ 2-במקביל. Phase 4 סדרתי
+- Phase 2.5 (video-deep-analyzer) הוסר ב-מאי 2026 — הסוכן עדיין קיים להפעלה ידנית אם נדרש
 
 ---
 
@@ -2165,9 +2155,6 @@ tools: Read, Write, Bash, Skill
 - `clients/<slug>/02-analysis/local-competitors.md`
 - `clients/<slug>/02-analysis/global-competitors.md`
 - `clients/<slug>/02-analysis/trends.md`
-- `clients/<slug>/02b-video-deep/client/*.md` (3 קבצים)
-- `clients/<slug>/02b-video-deep/local/*.md` (3 קבצים)
-- `clients/<slug>/02b-video-deep/global/*.md` (3 קבצים)
 - `clients/<slug>/03-brand/visual.md` + `visual.md` (כולל website-screenshot.png)
 - `clients/<slug>/03-brand/voice.md`
 - `templates/report-template.html` (סגנון client-brand · ברירת מחדל)
@@ -2187,9 +2174,9 @@ tools: Read, Write, Bash, Skill
 ## תהליך עבודה
 
 ### שלב 1: בדיקת שלמות
-- **9 ניתוחי וידאו עומק חובה** (לא SKIPPED). אם חסרים — STOP והודע
 - **5 חשבונות בכל קטגוריית מתחרים** — לאמת
 - **3 פלטפורמות בכל מחקר** — אינסטגרם + טיקטוק + פייסבוק
+- **לא לכלול פרק ניתוח וידאו עומק** — Phase 2.5 הוסר ב-מאי 2026. אם בטעות יש קבצי 02b-video-deep/ בתיקייה — להתעלם מהם.
 
 ### שלב 2: קריאת CLIENT.md → פרמטרים
 - שם הלקוח
@@ -2228,30 +2215,29 @@ tools: Read, Write, Bash, Skill
 - אותו מבנה
 - 5 טרנדים גלובליים — **כל אחד עם 2-3 לינקים לסרטונים אמיתיים**
 
-#### חלק 06 · ניתוח וידאו עומק
-- 9 ניתוחי וידאו (3 לקוח + 3 ישראל + 3 גלובלי)
-- כל אחד בקלף מסוגנן
-
-#### חלק 07 · טרנדים וסאונדים
+#### חלק 06 · טרנדים וסאונדים
+> **הערה**: בעבר היה כאן פרק "ניתוח וידאו עומק" עם 9 וידאו ספציפיים. הוא הוסר ב-מאי 2026 כדי לקצר את הדוח ולהאיץ את הריצה. מספר הפרקים ירד מ-13 ל-12.
 - 5 טרנדים עם 2-3 סרטונים אמיתיים בכל אחד
 - 5 סאונדים עם רילס לדוגמא
 
-#### חלק 08 · זהות ויזואלית
+#### חלק 07 · זהות ויזואלית
 - `.swatch-grid`, טיפוגרפיה, Brand Pattern
 
-#### חלק 09 · טון ושפה
+#### חלק 08 · טון ושפה
 - בלוקקווט הצהרת טון
 - Value Props + Anti-tone + Soul Statement
 
-#### חלק 10 · SWOT
+#### חלק 09 · SWOT
 - `.swot-grid`
 
-#### חלק 11 · תכנית פעולה
+#### חלק 10 · תכנית פעולה
 - 5-7 פעולות, אם רב-נישתי — תג נישה
 
-#### חלק 12 · הצעת יום צילום
+#### חלק 11 · הצעת יום צילום
 
-#### חלק 13 · גאנט תוכן
+#### חלק 12 · גאנט תוכן
+
+> **חשוב**: מספור הפרקים — 12 פרקים סה"כ (בעבר 13). הפרק שהוסר הוא ניתוח וידאו עומק. אל תוסיפי "פרק 06 — ניתוח עומק" גם אם יש לך קבצי 02b-video-deep/.
 
 ### שלב 4: בניית ה-HTML
 
@@ -2394,13 +2380,13 @@ open clients/<slug>/04-deliverables/report.pdf
 6. **5 חשבונות בכל קטגוריית מתחרים** — לאמת מה-`local-competitors.md` ו-`global-competitors.md`
 7. **תוכן הלקוח לא ב-"5 סוגי תוכן מובילים"** — רק בסקציית "שלנו זכור לטובה"
 8. **PDF עם הלינקים לחיצים** — לבדוק! לא להתקבע על Chrome headless אם לא עובד
-9. **9 ניתוחי וידאו** — לא להוציא דוח עם פחות
+9. **בלי פרק ניתוח וידאו עומק** — Phase 2.5 הוסר ב-מאי 2026
 10. **עברית תקנית** — Pass של hebrew-content-writer חובה
 
 ## Self-Check Before Output
 
 - [ ] **בחירת template נכונה** לפי `--style` (default = client-brand)
-- [ ] **9 ניתוחי וידאו** מובאים בפרק 06 (לא פחות)
+- [ ] **אין פרק "ניתוח וידאו עומק"** — הפרק הוסר. הדוח מכיל 12 פרקים (לא 13)
 - [ ] **5 חשבונות בכל קטגוריית מתחרים** בפרקים 04 + 05
 - [ ] **כותרות פרקים בעברית בלבד** — "חלק 01" לא "CHAPTER 01"
 - [ ] **כל לינק עם `target="_blank" rel="noopener noreferrer"`**
@@ -2419,7 +2405,7 @@ open clients/<slug>/04-deliverables/report.pdf
 
 ===FILE: .claude/commands/onboard-client.md===
 ---
-description: מפעיל את הפייפליין השלם של אונבורדינג לקוח חדש - מקבל client-slug ומריץ 9 סוכנים ב-5 פאזות (1 sequential → 4 parallel → 1 sequential batch → 2 parallel → 1 sequential) ומחזיר דוח מלא בעברית בסגנון Creative People. תומך בפלג `--style=cp-house` להפקת דוח בסגנון הבית של Creative People (Jeremy 1:1 replica).
+description: מפעיל את הפייפליין השלם של אונבורדינג לקוח חדש - מקבל client-slug ומריץ 8 סוכנים ב-4 פאזות (1 sequential → 4 parallel → 2 parallel → 1 sequential) ומחזיר דוח PDF מלא בעברית בסגנון Creative People. Phase 2.5 (ניתוח וידאו עומק) הוסר מהפייפליין הראשי — הסוכן video-deep-analyzer זמין להפעלה ידנית. תומך בפלג `--style=cp-house` להפקת דוח בסגנון הבית של Creative People (Jeremy 1:1 replica).
 argument-hint: <client-slug> [--style=client-brand|cp-house]
 ---
 
@@ -2460,14 +2446,7 @@ argument-hint: <client-slug> [--style=client-brand|cp-house]
 
 המתן לסיום של כל 4.
 
-ודא שנוצרו 3 קבצי `*-top-videos.txt`.
-
-### Phase 2.5: Video Deep Analysis (sequential batch)
-
-הפעל את `video-deep-analyzer`:
-- prompt: *"נתח לעומק את 9 הוידאו של `$1`. URLs ב-3 קבצי `*-top-videos.txt`. תהליך: yt-dlp → ffmpeg → whisper → multimodal frame analysis. כתוב 9 קבצי MD ב-`clients/$1/02b-video-deep/<source>/`. דלג על וידאו מוגן."*
-
-המתן לסיום. ייתכן זמן רב (10-25 דק') — להתריע למשתמש.
+> **הערה**: Phase 2.5 (`video-deep-analyzer`) **הוסר מהפייפליין** מאז מאי 2026 — דילוג חוסך ~20 דקות. אם מאוחר יותר תזדקקי לניתוח וידאו עומק (למשל לתסריטי צילום מבוססי דאטה), אפשר להפעיל את הסוכן ידנית: *"הפעלי את video-deep-analyzer על clients/$1"*.
 
 ### Phase 3: Brand Identity (2 סוכנים במקביל)
 
@@ -2480,7 +2459,7 @@ argument-hint: <client-slug> [--style=client-brand|cp-house]
 ### Phase 4: Report Consolidation (sequential)
 
 הפעל את `report-consolidator`:
-- prompt: *"אחד את כל הקבצים של `$1` לדוח HTML+PDF סופי ב-`clients/$1/04-deliverables/`. **סגנון: `<STYLE>`** (client-brand או cp-house לפי הפלג). עברית תקנית מובטחת ע"י hebrew-content-writer. הפרדה לפי נישות אם רב-נישה. שילוב לינקים אמיתיים + 9 ניתוחי וידאו עומק. PDF עם margin 0, page-break rules מובנים, hyperlinks לחיצים."*
+- prompt: *"אחד את כל הקבצים של `$1` לדוח PDF סופי ב-`clients/$1/04-deliverables/`. **סגנון: `<STYLE>`** (client-brand או cp-house לפי הפלג). עברית תקנית מובטחת ע"י hebrew-content-writer. הפרדה לפי נישות אם רב-נישה. שילוב לינקים אמיתיים למתחרים וטרנדים. **בלי פרק ניתוח וידאו עומק** (Phase 2.5 הוסרה). PDF עם margin 0, page-break rules מובנים, hyperlinks לחיצים. מחק את ה-HTML הביניים אחרי שה-PDF נוצר."*
 
 **אם `STYLE=client-brand`**: השתמש ב-`templates/report-template.html` עם צבעי המותג של הלקוח כאקסנט.
 **אם `STYLE=cp-house`**: השתמש ב-`templates/report-template-cp-house.html` — מונוכרום, סריף, pill section headers, ללא צבעי לקוח.
@@ -2496,15 +2475,14 @@ argument-hint: <client-slug> [--style=client-brand|cp-house]
 ## הערות
 
 - אם סוכן כלשהו נכשל — **עצור את הפייפליין** והודע באיזה Phase, מי הסוכן, ומה השגיאה
-- שמור על הסדר: Phase 2 מחכה ל-Phase 1, Phase 2.5 מחכה ל-Phase 2, וכו'
+- שמור על הסדר: Phase 2 מחכה ל-Phase 1, Phase 3 מחכה ל-Phase 2, Phase 4 מחכה ל-Phase 3
 - בכל phase עם parallel — שלח את כל ה-Agent calls באותה הודעה (לא ברצף)
-- אם Phase 2.5 נכשל ברוב הוידאו — להתריע אבל להמשיך ל-Phase 3 (הדוח עדיין שווה)
 
 ===END FILE===
 
 ===FILE: .claude/commands/write-shooting-scripts.md===
 ---
-description: כותב תסריטים מפורטים לסט של פוסטים/רילסים מתוך הגאנט. כל תסריט מבוסס על ניתוח וידאו עומק מ-02b-video-deep (database אמיתי), לא דמיון. כולל hook, שורות דיבור, פעולות, b-roll, תזמון, ו-CTA.
+description: כותב תסריטים מפורטים לסט של פוסטים/רילסים מתוך הגאנט. תסריטים מבוססים על דוח האסטרטגיה + מחקר המתחרים + טון המותג (אחרי הסרת Phase 2.5, הסוכן עובד בלי database של ניתוחי וידאו עומק). כולל hook, שורות דיבור, פעולות, b-roll, תזמון, ו-CTA.
 argument-hint: <client-slug> [post-ids או 'all-week-N']
 ---
 
@@ -2516,18 +2494,22 @@ argument-hint: <client-slug> [post-ids או 'all-week-N']
 
 ### שלב 1: קריאת קלטים
 
-- `clients/$1/04-deliverables/content-gantt-*.md` — הגאנט החדש ביותר
-- `clients/$1/02b-video-deep/**/*.md` — **ה-database — כל ניתוחי הוידאו עומק**
+- `clients/$1/04-deliverables/content-gantt-*.md` — הגאנט החדש ביותר (אם קיים)
+- `clients/$1/04-deliverables/report.pdf` — הדוח האסטרטגי המלא (מקור עיקרי)
 - `clients/$1/03-brand/voice.md` — הטון בדיוק
 - `clients/$1/03-brand/visual.md` — פלטה
-- `clients/$1/02-analysis/local-competitors.md` + `global-competitors.md` — דוגמאות נוספות
+- `clients/$1/02-analysis/local-competitors.md` + `global-competitors.md` — דוגמאות + לינקים לפוסטים מובילים
 - `clients/$1/02-analysis/trends.md` — סאונדים מומלצים
+- **אופציונלי**: `clients/$1/02b-video-deep/**/*.md` (אם הופעל ידנית video-deep-analyzer) — דאטה עשיר יותר לתסריטים מבוססי-דאטה
 
 ### שלב 2: לכל פוסט נבחר
 
-1. קרא מה-גאנט: נושא, פלטפורמה, פורמט, רפרנס לוידאו עומק
-2. פתח את קובץ הרפרנס (`02b-video-deep/<source>/<video-id>.md`)
-3. השתמש ב"ה-Hook המדויק לתבנית עתידית" של אותו קובץ כבסיס
+1. קרא מה-גאנט: נושא, פלטפורמה, פורמט (אם אין גאנט — בנה תסריטים לפי הצעת יום הצילום בדוח)
+2. **אם יש 02b-video-deep/** — השתמש ב-Hook המדויק מהוידאו הרפרנס
+3. **אם אין 02b-video-deep/** — הפק Hook מבוסס על:
+   - 5 סוגי התוכן המובילים מהדוח (Chapter 04 + 05)
+   - דוגמאות הפוסטים של המתחרים (לינקים בlocal-competitors.md ו-global-competitors.md)
+   - הטרנדים בtrends.md
 4. התאם לטון של הלקוח (`voice.md`) — בפרט בלשון מינים ו-Anti-tone
 5. כתוב תסריט מלא בפורמט הבא
 
@@ -2611,7 +2593,7 @@ based_on:
 
 ## כללי איכות
 
-1. **כל Hook חייב לבוא מ-`02b-video-deep`** — לא מהדמיון. אם אין רפרנס מתאים — להעיר ולבקש להוסיף וידאו לעומק
+1. **כל Hook חייב להיות מבוסס דאטה** — אם יש `02b-video-deep` → להשתמש בו. אם לא → מהדוח האסטרטגי + לינקים לפוסטי מתחרים מובילים מ-`02-analysis/`. לעולם לא מהדמיון.
 2. **טון בדיוק לפי voice.md** — אם המותג לא משתמש ב"!" אז גם בתסריט לא
 3. **לשון המינים** — לפי voice.md (אם "אישה רבות" — לשמור)
 4. **Anti-tone חמור** — לעבור על voice.md ולא להשתמש במילה אסורה
@@ -2652,7 +2634,7 @@ based_on:
 
 ## Self-Check Before Output
 
-- [ ] **כל תסריט עם רפרנס** ל-`02b-video-deep/<source>/<video-id>.md`
+- [ ] **כל תסריט עם רפרנס דאטה** (לוידאו ב-`02b-video-deep/` אם קיים, אחרת לפרק ספציפי בדוח או לפוסט מתחרה ב-`02-analysis/`)
 - [ ] **גיוון פרסונות** — לפחות 3 פרסונות שונות בסט
 - [ ] **אורכי מודעות** — 30-60 שניות לכל תסריט ממומן
 - [ ] **0 em-dashes בעברית**
@@ -2665,7 +2647,7 @@ based_on:
 
 ===FILE: .claude/commands/generate-content-gantt.md===
 ---
-description: מייצר גאנט תוכן חודשי ללקוח על בסיס הראפורט הסופי + ניתוחי הוידאו עומק. 4 שבועות של תוכן עם תאריכים, פלטפורמות, פורמטים, נושאים ו-CTA. אם הלקוח רב-נישתי - רוטציה בין נישות.
+description: מייצר גאנט תוכן חודשי ללקוח על בסיס הדוח האסטרטגי + מחקר המתחרים + טרנדים. 4 שבועות של תוכן עם תאריכים, פלטפורמות, פורמטים, נושאים ו-CTA. אם הלקוח רב-נישתי - רוטציה בין נישות. ניתוחי וידאו עומק אופציונליים (אם video-deep-analyzer הופעל ידנית).
 argument-hint: <client-slug> [month]
 ---
 
@@ -2683,7 +2665,8 @@ argument-hint: <client-slug> [month]
 - `clients/$1/02-analysis/local-competitors.md` — 5 סוגי תוכן ישראל
 - `clients/$1/02-analysis/global-competitors.md` — טרנדים גלובליים + הזדמנויות
 - `clients/$1/02-analysis/trends.md` — טרנדים + סאונדים החודש
-- `clients/$1/02b-video-deep/**/*.md` — ניתוחי וידאו עומק (database)
+- `clients/$1/04-deliverables/report.pdf` — הדוח האסטרטגי (מקור עיקרי)
+- `clients/$1/02b-video-deep/**/*.md` — **אופציונלי** — ניתוחי וידאו עומק (אם video-deep-analyzer הופעל ידנית)
 - `clients/$1/03-brand/voice.md` — טון
 - `clients/$1/03-brand/visual.md` — פלטה
 
@@ -2704,7 +2687,7 @@ argument-hint: <client-slug> [month]
 - CTA
 - מי בצוות צריך להפיק
 - האם דורש יום צילום
-- **רפרנס לוידאו מ-`02b-video-deep/` שעליו מבוסס**
+- **רפרנס דאטה** — קישור לפרק בדוח, לוידאו ב-`02b-video-deep/` (אם קיים), או לפוסט מתחרה ב-`02-analysis/`
 
 ### שלב 3: רב-נישה — רוטציה
 אם CLIENT.md מציין 2+ נישות:
@@ -2770,7 +2753,7 @@ based_on:
 1. **תאריכים אמיתיים** — לוח שנה אמיתי, החודש המבוקש (default: חודש הבא)
 2. **שעות פרסום אופטימליות** — לפי `client-social.md` או 19:00-21:00 כברירת מחדל
 3. **גיוון** — לא 4 Reels באותו שבוע, לא 3 פוסטים אותו נושא
-4. **כל פוסט נטוע בדאטה** — חוזר לסוג תוכן שזוהה כמנצח ו/או לוידאו מ-`02b-video-deep/`
+4. **כל פוסט נטוע בדאטה** — חוזר לסוג תוכן שזוהה כמנצח בדוח, או לפוסט מתחרה מ-`02-analysis/`, או לוידאו מ-`02b-video-deep/` (אם קיים)
 5. **כל פוסט מסומן בנישה** אם רב-נישה
 6. **עברית תקנית**
 
